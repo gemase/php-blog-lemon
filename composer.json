@@ -1,0 +1,22 @@
+{
+    "name": "php-blog-lemon/app",
+    "description": "Blog Lemon",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+            "app/Helpers/helpers.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Genaro Martínez",
+            "email": "gemase.tms@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.4"
+    }
+}
