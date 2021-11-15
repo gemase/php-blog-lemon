@@ -28,7 +28,7 @@ class Core {
     public function __construct(Request $_Request = null) {
         $url = $this->getUrl($_Request);
 
-        if (isset($url[0]) && file_exists('../App/Controllers/' . ucwords($url[0]). '.php')) {
+        if (isset($url[0]) && file_exists('../app/Controllers/' . ucwords($url[0]). '.php')) {
             $this->controlador = ucwords($url[0]);
             unset($url[0]);
         } else {

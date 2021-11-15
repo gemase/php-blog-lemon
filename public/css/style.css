@@ -1,0 +1,12 @@
+body {
+    font-family: 'Mulish', sans-serif;
+}
+
+.formulario {
+    background-color: #f6f8fa;
+    font-size: 15px;
+}
+
+.formulario > .titulo {
+    font-size: 20px;
+}
