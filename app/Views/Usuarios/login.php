@@ -1,7 +1,7 @@
 <?php require_once APPROOT . '/Views/Inc/header.php'; ?>
 <div class="container">
     <div class="row m-3">
-        <div class="col-md-5 mx-auto border rounded-2 p-4 formulario">
+        <div class="col-md-5 mx-auto shadow-sm rounded-3 p-4 formulario">
             <div class="alert alert-warning p-2" role="alert">
                 Alerta de éxito.
             </div>
@@ -21,7 +21,7 @@
                     <label class="form-label">Contraseña</label>
                     <input type="text" name="clave" class="form-control form-control-sm">
                 </div>
-                <div class="d-grid gap-2">
+                <div class="text-center">
                     <button type="submit" class="btn btn-success btn-sm">Confirmar</button>
                 </div>
             </form>

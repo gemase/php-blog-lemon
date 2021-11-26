@@ -1,12 +1,23 @@
 body {
-    font-family: 'Mulish', sans-serif;
+    background-color: #f2f5f8;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .formulario {
-    background-color: #f6f8fa;
+    background-color: #ffffff;
+    font-size: 14px;
+}
+
+.formulario .titulo {
+    font-size: 24px;
+}
+
+.navbar-principal {
+    background-color: #ffffff;
     font-size: 15px;
 }
 
-.formulario > .titulo {
-    font-size: 20px;
+.navbar-principal ul li a {
+    background-color: #ffffff;
+    font-size: 15px;
 }
