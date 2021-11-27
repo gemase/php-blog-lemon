@@ -196,6 +196,23 @@ class Perfil extends Crud {
     }
 
     /**
+     * Retorna instancia de Perfil Autor.
+     * @return Perfil
+     * @throws Exception Mensaje de validación.
+     */
+    public static function getInsPerfilAutor() {
+        $nombrePerfil = 'Autor';
+        $tabla = self::getNombreTabla();
+        $sql = "SELECT id FROM $tabla WHERE nombre = '$nombrePerfil'";
+        $idPerfil = self::crudUno($sql);
+        $_Perfil = self::load($idPerfil);
+        if (!$_Perfil instanceof Perfil) {
+            throw new \Exception('El perfil "Autor" no fue encontrado.');
+        }
+        return $_Perfil;
+    }
+
+    /**
      * Determina si el perfil tiene acceso a un determinado catálogo 
      * según el nombre del mismo y permiso.
      * @param string $catalogo Nombre del campo del catálogo a nivel 
