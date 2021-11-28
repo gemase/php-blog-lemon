@@ -190,7 +190,7 @@ class Usuario extends Crud {
             if (!self::validaVacio($usuarioCorreo)) {
                 throw new \Exception('El usuario ó correo electrónico es requerido.');
             } else {
-                if (!self::validaCadena($usuarioCorreo)) {
+                if (!self::validaCarEsp($usuarioCorreo)) {
                     throw new \Exception('El usuario ó correo electrónico no es válido, no se permiten caracteres especiales.');
                 }
             }
@@ -213,7 +213,7 @@ class Usuario extends Crud {
                 throw new \Exception('El usuario ó correo electrónico no pertenece a ninguna cuenta.');
             }
             $_Usuario = current($colUsuarios);
-            $verificaClave = password_hash($clave, $_Usuario->getClave());
+            $verificaClave = password_verify($clave, $_Usuario->getClave());
             if ($verificaClave !== true) {
                 throw new \Exception('La contraseña no es correcta.');
             }
@@ -252,7 +252,7 @@ class Usuario extends Crud {
                 if (!self::validaLogMax($nombre, 60)) {
                     throw new \Exception('El nombre no es válido, el máximo de caracteres es "40".');
                 }
-                if (!self::validaCadena($nombre)) {
+                if (!self::validaCarEsp($nombre)) {
                     throw new \Exception('El nombre no es válido, no se permiten caracteres especiales.');
                 }
             }
@@ -262,7 +262,7 @@ class Usuario extends Crud {
                 if (!self::validaLogMax($apellido, 80)) {
                     throw new \Exception('El apellido no es válido, el máximo de caracteres es "80".');
                 }
-                if (!self::validaCadena($apellido)) {
+                if (!self::validaCarEsp($apellido)) {
                     throw new \Exception('El apellido no es válido, no se permiten caracteres especiales.');
                 }
             }
@@ -272,7 +272,7 @@ class Usuario extends Crud {
                 if (!self::validaLogMax($usuario, 20)) {
                     throw new \Exception('El usuario no es válido, el máximo de caracteres es "20".');
                 }
-                if (!self::validaCadena($apellido)) {
+                if (!self::validaCarEsp($usuario)) {
                     throw new \Exception('El usuario no es válido, no se permiten caracteres especiales.');
                 }
                 if (!self::isUsuarioUnico($usuario)) {
@@ -285,7 +285,7 @@ class Usuario extends Crud {
                 if (!self::validaLogMax($correo, 60)) {
                     throw new \Exception('El correo electrónico no es válido, el máximo de caracteres es "60".');
                 }
-                if (!self::validaCadena($correo)) {
+                if (!self::validaCarEsp($correo)) {
                     throw new \Exception('El correo electrónico no es válido, no se permiten caracteres especiales.');
                 }
                 if (!self::validaCorreo($correo)) {
@@ -316,7 +316,7 @@ class Usuario extends Crud {
                 'id_perfil' => $_Perfil->getId(),
                 'nombre' => $nombre,
                 'apellido' => $apellido,
-                'usuario' => $usuario,
+                'usuario' => strtolower($usuario),
                 'correo' => $correo,
                 'clave' => password_hash($clave, PASSWORD_DEFAULT),
                 'estatus' => self::E_ACTIVO,
@@ -381,6 +381,7 @@ class Usuario extends Crud {
      */
     private static function isUsuarioUnico($usuario, Usuario $_Usuario = null) {
         $tabla = self::getNombreTabla();
+        $usuario = strtolower($usuario);
         $condiciones = '';
         if ($_Usuario instanceof Usuario) {
             $condiciones = "AND id <> {$_Usuario->getId()}";
@@ -424,20 +425,21 @@ class Usuario extends Crud {
         }
         if (isset($aFiltros['usuario'])) {
             $usuario = trim($aFiltros['usuario']);
-            if (!self::validaCadena($usuario)) {
+            $usuario = strtolower($usuario);
+            if (!self::validaCarEsp($usuario)) {
                 throw new \Exception('El usuario no es válido, no se permiten caracteres especiales.');
             }
-            $condiciones .= " AND usuario = $usuario";
+            $condiciones .= " AND usuario = '$usuario'";
         }
         if (isset($aFiltros['correo'])) {
             $correo = trim($aFiltros['correo']);
-            if (!self::validaCadena($correo)) {
+            if (!self::validaCarEsp($correo)) {
                 throw new \Exception('El correo electrónico no es válido, no se permiten caracteres especiales.');
             }
             if (!self::validaCorreo($correo)) {
                 throw new \Exception('El correo electrónico no es válido.');
             }
-            $condiciones .= " AND correo = $correo";
+            $condiciones .= " AND correo = '$correo'";
         }
         return $condiciones;
     }

@@ -24,9 +24,10 @@ class Usuarios {
                     ];
                     $result = Usuario::crea($_Perfil, $aDatos);
                     if ($result !== true) throw new Exception($result);
-                    $msg = 'Tu cuenta se creo correctamente, ahora puedes iniciar sesión.';
+                    $enlace = URLROOT . '/usuarios/login';
+                    $msg = 'Tu cuenta ha sido creada, ahora puedes <a href="'.$enlace.'">Iniciar sesión</a>.';
                     echo json_encode([
-                        'tipoAlerta' => 'alert-warning', 'msg' => $msg, 
+                        'tipoAlerta' => 'alert-success', 'textoAlerta' => $msg, 
                         'limpiaForm' => true, 'nuevoToken' => TokenCSRF::creaToken()
                     ]);
                 } else {
@@ -34,7 +35,7 @@ class Usuarios {
                 }
             } catch (\Exception $e) {
                 echo json_encode([
-                    'tipoAlerta' => 'alert-danger', 'msg' => $e->getMessage(), 
+                    'tipoAlerta' => 'alert-danger', 'textoAlerta' => $e->getMessage(), 
                     'nuevoToken' => TokenCSRF::creaToken()
                 ]);
             }
@@ -53,13 +54,13 @@ class Usuarios {
                     $_Req = Request::load('post');
                     $result = Usuario::iniciaSesion($_Req->get('usuarioCorreo'), $_Req->get('clave'));
                     if ($result !== true) throw new Exception($result);
-                    echo json_encode(['redirecciona' => true]);
+                    echo json_encode(['url' => true]);
                 } else {
                     echo TokenCSRF::msgTokenNoValido();
                 }
             } catch (\Exception $e) {
                 echo json_encode([
-                    'tipoAlerta' => 'alert-danger', 'msg' => $e->getMessage(), 
+                    'tipoAlerta' => 'alert-danger', 'textoAlerta' => $e->getMessage(), 
                     'nuevoToken' => TokenCSRF::creaToken()
                 ]);
             }

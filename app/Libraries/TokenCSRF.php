@@ -37,7 +37,8 @@ class TokenCSRF {
      */
     public static function msgTokenNoValido() {
         $aResp = [
-            'msg' => 'Token no válido, para continuar es necesario recargar la página.'
+            'tipoAlerta' => 'alert-danger',
+            'textoAlerta' => 'Token no válido, para continuar es necesario recargar la página.'
         ];
         return json_encode($aResp);
     }

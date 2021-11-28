@@ -59,6 +59,7 @@ trait Validador {
     /**
      * Valida que el valor enviado sean solo números y letras en base
      * a la cadena a comparar.
+     * FIXME: Mejorar método.
      * @param mixed $valor
      * @return bool true: Válido, false: No válido.
      */

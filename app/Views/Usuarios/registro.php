@@ -2,17 +2,9 @@
 <div class="container">
     <div class="row m-3">
         <div class="col-md-6 mx-auto shadow-sm rounded-3 p-4 formulario">
-            <div class="alert alert-warning p-2" role="alert">
-                Alerta de éxito.
-            </div>
-            <div class="alert alert-danger p-2" role="alert">
-                Alerta de validación.
-            </div>
-            <div class="alert alert-info p-2" role="alert">
-                Alerta de informativa.
-            </div>
+            <div id="contAlertaNuevoUsuario"></div>
             <div class="titulo fw-bold mb-2">Crear cuenta</div>
-            <form class="row g-3">
+            <form id="formNuevoUsuario" class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Nombre</label>
                     <input type="text" name="nombre" class="form-control form-control-sm">
@@ -31,17 +23,24 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Contraseña</label>
-                    <input type="text" name="clave" class="form-control form-control-sm">
+                    <input type="password" name="clave" class="form-control form-control-sm">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Vuelve a escribir la contraseña</label>
-                    <input type="text" name="claveConfirmacion" class="form-control form-control-sm">
+                    <input type="password" name="claveConfirmacion" class="form-control form-control-sm">
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-success btn-sm">Confirmar</button>
+                    <button id="botonNuevoUsuario" type="submit" class="btn btn-success btn-sm">Confirmar</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (e) => {
+        Usuario.eventosNuevoUsuario()
+    })
+</script>
+
 <?php require_once APPROOT . '/Views/Inc/footer.php'; ?>
