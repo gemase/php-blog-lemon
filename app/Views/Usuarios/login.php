@@ -14,7 +14,7 @@
                     <input type="password" name="clave" class="form-control form-control-sm">
                 </div>
                 <div class="text-center">
-                    <button id="botonLogin" type="submit" class="btn btn-success btn-sm">Confirmar</button>
+                    <button id="botonLogin" type="submit" class="btn btn-primary btn-sm">Confirmar</button>
                 </div>
             </form>
         </div>

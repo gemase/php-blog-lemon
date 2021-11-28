@@ -30,7 +30,7 @@
                     <input type="password" name="claveConfirmacion" class="form-control form-control-sm">
                 </div>
                 <div class="text-center">
-                    <button id="botonNuevoUsuario" type="submit" class="btn btn-success btn-sm">Confirmar</button>
+                    <button id="botonNuevoUsuario" type="submit" class="btn btn-primary btn-sm">Confirmar</button>
                 </div>
             </form>
         </div>

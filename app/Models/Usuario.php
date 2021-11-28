@@ -179,6 +179,33 @@ class Usuario extends Crud {
     }
 
     /**
+     * Instancia Usuario en base al usuario ó apodo.
+     * @param string $usuario Nombre de usuario ó apodo.
+     * @return Usuario|string string: Mensaje de validación
+     */
+    public static function getInsByUsuario($usuario) {
+        try {
+            $usuario = trim($usuario);
+            if (!self::validaVacio($usuario)) {
+                throw new \Exception('El usuario es requerido.');
+            }
+            if (!self::validaLogMax($usuario, 20)) {
+                throw new \Exception('El usuario no es válido, el máximo de caracteres es "20".');
+            }
+            if (!self::validaCarEsp($usuario)) {
+                throw new \Exception('El usuario no es válido, no se permiten caracteres especiales.');
+            }
+            $colUsuarios = self::registros(['usuario' => $usuario]);
+            if (empty($colUsuarios)) {
+                throw new \Exception('El usuario no existe.');
+            }
+            return current($colUsuarios);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
      * Inicia sesión de usuario.
      * @param string $usuarioCorreo Usuario ó correo electrónico.
      * @param string $clave Contraseña.

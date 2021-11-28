@@ -33,4 +33,5 @@ function getInsSysUsuario() {
  */
 function redirecciona(string $vista = null) {
     header('location: ' . URLROOT . '/' . $vista);
+    exit;
 }

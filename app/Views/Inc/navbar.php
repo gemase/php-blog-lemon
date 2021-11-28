@@ -23,7 +23,7 @@
                             <?=getInsSysUsuario()->getNombre()?>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item text-muted fw-bold" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item text-muted fw-bold" href="<?=URLROOT?>/usuarios/<?=getInsSysUsuario()->getUsuario()?>">Perfil</a></li>
                             <li><a class="dropdown-item text-muted fw-bold" href="<?=URLROOT?>/usuarios/logout">Cerrar sesión</a></li>
                         </ul>
                     </li>

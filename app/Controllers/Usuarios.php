@@ -6,6 +6,18 @@ use App\Models\Perfil;
 use App\Models\Usuario;
 
 class Usuarios {
+    //Vista: Perfil público del usuario
+    public function index($usuario) {
+        $_Usuario = null;
+        if (isAutenticado() && getInsSysUsuario()->getUsuario() == trim($usuario)) {
+            $_Usuario = getInsSysUsuario();
+        } else {
+            $_Usuario = Usuario::getInsByUsuario($usuario);
+        }
+        if (!$_Usuario instanceof Usuario) redirecciona();
+        require_once APPROOT . '/Views/Usuarios/index.php';
+    }
+
     //Vista: Crear cuenta
     public function registro() {
         if (Request::has('post')) {
