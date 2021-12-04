@@ -10,7 +10,7 @@
                             <span>@<?=$_Usuario->getUsuario()?></span>
                         </div>
                         <?php if (isAutenticado() && getInsSysUsuario()->getUsuario() == trim($usuario)): ?>
-                            <a href="" class="btn btn-primary btn-sm mt-3">Editar perfil</a>
+                            <a href="<?=URLROOT?>/usuarios/editar" class="btn btn-primary btn-sm mt-3">Editar perfil</a>
                         <?php endif; ?>
                     </div>
                 </div>

@@ -18,6 +18,10 @@ class Usuarios {
         require_once APPROOT . '/Views/Usuarios/index.php';
     }
 
+    public function editar() {
+        require_once APPROOT . '/Views/Usuarios/editar.php';
+    }
+
     //Vista: Crear cuenta
     public function registro() {
         if (Request::has('post')) {
