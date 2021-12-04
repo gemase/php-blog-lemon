@@ -25,6 +25,22 @@ class Usuario extends Crud {
     //Usuario protegido (No se permite su edición).
     const PROTEGIDO = 1;
 
+    //Género masculino.
+    const G_MASCULINO = 0;
+
+    //Género femenino.
+    const G_FEMENINO = 1;
+
+    //Género otro.
+    const G_OTRO = 2;
+
+    //Generos del usuario.
+    const A_GENEROS = [
+        self::G_MASCULINO => 'Masculino',
+        self::G_FEMENINO => 'Femenino',
+        self::G_OTRO => 'Otro'
+    ];
+
     /**
      * Identificador único del usuario.
      * @var integer
@@ -60,6 +76,31 @@ class Usuario extends Crud {
      * @var string
      */
     private $clave;
+    /**
+     * País del usuario.
+     * @var string|null
+     */
+    private $pais;
+    /**
+     * Ciudad del usuario.
+     * @var string|null
+     */
+    private $ciudad;
+    /**
+     * Género del usuario.
+     * @var integer|null
+     */
+    private $genero;
+    /**
+     * Fecha de nacimiento del usuario.
+     * @var string|null
+     */
+    private $fecha_nacimiento;
+    /**
+     * Biografía del usuario.
+     * @var string|null
+     */
+    private $biografia;
     /**
      * Estatus del usuario.
      * @var integer
@@ -121,6 +162,51 @@ class Usuario extends Crud {
      */
     public function getCorreo() {
         return $this->correo;
+    }
+    /**
+     * País del usuario.
+     * @return string|null
+     */
+    public function getPais() {
+        return $this->pais;
+    }
+    /**
+     * Ciudad del usuario.
+     * @return string|null
+     */
+    public function getCiudad() {
+        return $this->ciudad;
+    }
+    /**
+     * Género del usuario.
+     * @param boolean $muestraDes true: Retorna descripción,
+     * false: Valor del campo.
+     * @return string|integer|null
+     */
+    public function getGenero($muestraDes = false) {
+        if ($muestraDes && !is_null($this->genero)) {
+            return self::A_GENEROS[$this->genero];
+        }
+        return $this->genero;
+    }
+    /**
+     * Fecha de nacimiento del usuario.
+     * @param boolean $objeto true: Instancia DateTime,
+     * false: Valor del campo.
+     * @return string|DateTime|null
+     */
+    public function getFechaNacimiento($objeto = false) {
+        if ($objeto && !is_null($this->fecha_nacimiento)) {
+            return new \DateTime($this->fecha_nacimiento);
+        }
+        return $this->fecha_nacimiento;
+    }
+    /**
+     * Biografía del usuario.
+     * @return string|null
+     */
+    public function getBiografia() {
+        return $this->biografia;
     }
     /**
      * Contraseña del usuario.
