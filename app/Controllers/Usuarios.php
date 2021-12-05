@@ -18,8 +18,117 @@ class Usuarios {
         require_once APPROOT . '/Views/Usuarios/index.php';
     }
 
+    //Vista: Editar perfil
     public function editar() {
+        if (!isAutenticado()) redirecciona();
+        $_Usuario = getInsSysUsuario();
+        $aGeneros = Usuario::A_GENEROS;
         require_once APPROOT . '/Views/Usuarios/editar.php';
+    }
+
+    //Petición post: Editar información general de usuario
+    public function postEditaInfGeneral() {
+        if (Request::has('post')) {
+            try {
+                $_RequServer = Request::load('server');
+                if (TokenCSRF::verificaToken($_RequServer->get('HTTP_CSRF_TOKEN'))) {
+                    $_Usuario = getInsSysUsuario();
+                    $_Req = Request::load('post');
+                    $aDatos = [
+                        'nombre' => $_Req->get('nombre'),
+                        'apellido' => $_Req->get('apellido'),
+                        'pais' => $_Req->get('pais'),
+                        'ciudad' => $_Req->get('ciudad'),
+                        'genero' => $_Req->get('genero'),
+                        'fechaNacimiento' => $_Req->get('fechaNacimiento'),
+                        'biografia' => $_Req->get('biografia')
+                    ];
+                    $result = $_Usuario->editaInformacionGeneral($_Usuario, $aDatos);
+                    if ($result !== true) throw new Exception($result);
+                    $msg = 'Tu información se editó correctamente.';
+                    echo json_encode([
+                        'tipoAlerta' => 'alert-success', 'textoAlerta' => $msg, 
+                        'nuevoToken' => TokenCSRF::creaToken()
+                    ]);
+                } else {
+                    echo TokenCSRF::msgTokenNoValido();
+                }
+            } catch (\Exception $e) {
+                echo json_encode([
+                    'tipoAlerta' => 'alert-danger', 'textoAlerta' => $e->getMessage(), 
+                    'nuevoToken' => TokenCSRF::creaToken()
+                ]);
+            }
+        } else {
+            redirecciona();
+        }
+    }
+
+    //Petición post: Editar cuenta de usuario
+    public function postEditaInfCuenta() {
+        if (Request::has('post')) {
+            try {
+                $_RequServer = Request::load('server');
+                if (TokenCSRF::verificaToken($_RequServer->get('HTTP_CSRF_TOKEN'))) {
+                    $_Usuario = getInsSysUsuario();
+                    $_Req = Request::load('post');
+                    $aDatos = [
+                        'usuario' => $_Req->get('usuario'),
+                        'correo' => $_Req->get('correo')
+                    ];
+                    $result = $_Usuario->editaInformacionCuenta($_Usuario, $aDatos);
+                    if ($result !== true) throw new Exception($result);
+                    $msg = 'Tu información se editó correctamente.';
+                    echo json_encode([
+                        'tipoAlerta' => 'alert-success', 'textoAlerta' => $msg, 
+                        'nuevoToken' => TokenCSRF::creaToken()
+                    ]);
+                } else {
+                    echo TokenCSRF::msgTokenNoValido();
+                }
+            } catch (\Exception $e) {
+                echo json_encode([
+                    'tipoAlerta' => 'alert-danger', 'textoAlerta' => $e->getMessage(), 
+                    'nuevoToken' => TokenCSRF::creaToken()
+                ]);
+            }
+        } else {
+            redirecciona();
+        }
+    }
+
+    //Petición post: Editar clave de usuario
+    public function postEditaInfClave() {
+        if (Request::has('post')) {
+            try {
+                $_RequServer = Request::load('server');
+                if (TokenCSRF::verificaToken($_RequServer->get('HTTP_CSRF_TOKEN'))) {
+                    $_Usuario = getInsSysUsuario();
+                    $_Req = Request::load('post');
+                    $aDatos = [
+                        'claveActual' => $_Req->get('claveActual'),
+                        'claveNueva' => $_Req->get('claveNueva'),
+                        'claveConfirmacion' => $_Req->get('claveConfirmacion')
+                    ];
+                    $result = $_Usuario->editaInformacionClave($_Usuario, $aDatos);
+                    if ($result !== true) throw new Exception($result);
+                    $msg = 'Tu información se editó correctamente.';
+                    echo json_encode([
+                        'tipoAlerta' => 'alert-success', 'textoAlerta' => $msg, 
+                        'nuevoToken' => TokenCSRF::creaToken(), 'limpiaForm' => true
+                    ]);
+                } else {
+                    echo TokenCSRF::msgTokenNoValido();
+                }
+            } catch (\Exception $e) {
+                echo json_encode([
+                    'tipoAlerta' => 'alert-danger', 'textoAlerta' => $e->getMessage(), 
+                    'nuevoToken' => TokenCSRF::creaToken()
+                ]);
+            }
+        } else {
+            redirecciona();
+        }
     }
 
     //Vista: Crear cuenta

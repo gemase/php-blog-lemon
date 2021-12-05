@@ -26,13 +26,13 @@ class Usuario extends Crud {
     const PROTEGIDO = 1;
 
     //Género masculino.
-    const G_MASCULINO = 0;
+    const G_MASCULINO = 1;
 
     //Género femenino.
-    const G_FEMENINO = 1;
+    const G_FEMENINO = 2;
 
     //Género otro.
-    const G_OTRO = 2;
+    const G_OTRO = 3;
 
     //Generos del usuario.
     const A_GENEROS = [
@@ -341,10 +341,242 @@ class Usuario extends Crud {
     }
 
     /**
+     * Edita información general del usuario.
+     * @param Usuario $_Usuario Usuario en sesión.
+     * @param array $aDatos Datos a editar.
+     * @return bool|string true: El usuario fue editado, string: Mensaje de 
+     * validación.
+     */
+    public function editaInformacionGeneral(Usuario $_Usuario, array $aDatos) {
+        try {
+            $aBD = [];
+            $aDatosEsperados = [
+                'nombre', 'apellido', 'pais', 'ciudad', 'genero', 'fechaNacimiento', 
+                'biografia'
+            ];
+            foreach ($aDatos as $key => $value) {
+                if (in_array($key, $aDatosEsperados)) {
+                    $$key = trim($value);
+                } else {
+                    throw new \Exception("El dato \"$key\" no es aceptado para editar 
+                    la información general del usuario.");
+                }
+            }
+            if (isset($nombre) && $this->getNombre() != $nombre) {
+                if (!self::validaVacio($nombre)) {
+                    throw new \Exception('El nombre es requerido.');
+                }
+                if (!self::validaLogMax($nombre, 60)) {
+                    throw new \Exception('El nombre no es válido, el máximo de caracteres es "40".');
+                }
+                if (!self::validaCarEsp($nombre)) {
+                    throw new \Exception('El nombre no es válido, no se permiten caracteres especiales.');
+                }
+                $aBD['nombre'] = $nombre;
+            }
+            if (isset($apellido) && $this->getApellido() != $apellido) {
+                if (!self::validaVacio($apellido)) {
+                    throw new \Exception('El apellido es requerido.');
+                }
+                if (!self::validaLogMax($apellido, 80)) {
+                    throw new \Exception('El apellido no es válido, el máximo de caracteres es "80".');
+                }
+                if (!self::validaCarEsp($apellido)) {
+                    throw new \Exception('El apellido no es válido, no se permiten caracteres especiales.');
+                }
+                $aBD['apellido'] = $apellido;
+            }
+            if (isset($pais) && $this->getPais() != $pais) {
+                if (self::validaVacio($pais)) {
+                    if (!self::validaLogMax($pais, 40)) {
+                        throw new \Exception('El país no es válido, el máximo de caracteres es "40".');
+                    }
+                    if (!self::validaCarEsp($pais)) {
+                        throw new \Exception('El país no es válido, no se permiten caracteres especiales.');
+                    }
+                    $aBD['pais'] = $pais;
+                } else {
+                    $aBD['pais'] = null;
+                }
+            }
+            if (isset($ciudad) && $this->getCiudad() != $ciudad) {
+                if (self::validaVacio($ciudad)) {
+                    if (!self::validaLogMax($ciudad, 40)) {
+                        throw new \Exception('El ciudad no es válido, el máximo de caracteres es "40".');
+                    }
+                    if (!self::validaCarEsp($ciudad)) {
+                        throw new \Exception('El ciudad no es válido, no se permiten caracteres especiales.');
+                    }
+                    $aBD['ciudad'] = $ciudad;
+                } else {
+                    $aBD['ciudad'] = null;
+                }
+            }
+            if (isset($genero) && $this->getGenero() != $genero) {
+                if (self::validaVacio($genero)) {
+                    if (!array_key_exists($genero, self::A_GENEROS)) {
+                        throw new \Exception('El genero no es válido.');
+                    }
+                    $aBD['genero'] = $genero;
+                } else {
+                    $aBD['genero'] = null;
+                }
+            }
+            if (isset($fechaNacimiento) && $this->getFechaNacimiento() != $fechaNacimiento) {
+                if (self::validaVacio($fechaNacimiento)) {
+                    if (!self::validaFecha($fechaNacimiento)) {
+                        throw new \Exception('La fecha de nacimiento no es válida.');
+                    }
+                    $aBD['fecha_nacimiento'] = $fechaNacimiento;
+                } else {
+                    $aBD['fecha_nacimiento'] = null;
+                }
+            }
+            if (isset($biografia) && $this->getBiografia() != $biografia) {
+                if (self::validaVacio($biografia)) {
+                    if (!self::validaCarEsp($biografia)) {
+                        throw new \Exception('El biografía no es válida, no se permiten caracteres especiales.');
+                    }
+                    $aBD['biografia'] = $biografia;
+                } else {
+                    $aBD['biografia'] = null;
+                }
+            }
+            if (!empty($aBD)) {
+                $result = self::crudEdita($aBD, ['id' => $this->getId()]);
+                if ($result !== true) throw new \Exception('Detalle en conexión de BD.');
+            }
+            return true;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * Edita información de cuenta del usuario.
+     * @param Usuario $_Usuario Usuario en sesión.
+     * @param array $aDatos Datos a editar.
+     * @return bool|string true: El usuario fue editado, string: Mensaje de 
+     * validación.
+     */
+    public function editaInformacionCuenta($_Usuario, array $aDatos) {
+        try {
+            $aBD = [];
+            $aDatosEsperados = ['usuario', 'correo'];
+            foreach ($aDatos as $key => $value) {
+                if (in_array($key, $aDatosEsperados)) {
+                    $$key = trim($value);
+                } else {
+                    throw new \Exception("El dato \"$key\" no es aceptado para editar 
+                    la información de cuenta del usuario.");
+                }
+            }
+            if (isset($usuario) && $this->getUsuario() != $usuario) {
+                if (!self::validaVacio($usuario)) {
+                    throw new \Exception('El usuario es requerido.');
+                }
+                if (!self::validaLogMax($usuario, 20)) {
+                    throw new \Exception('El usuario no es válido, el máximo de caracteres es "20".');
+                }
+                if (!self::validaCarEsp($usuario)) {
+                    throw new \Exception('El usuario no es válido, no se permiten caracteres especiales.');
+                }
+                if (!self::isUsuarioUnico($usuario, $this)) {
+                    throw new \Exception('El usuario ingresado ya fue ocupado.');
+                }
+                $aBD['usuario'] = $usuario;
+            }
+            if (isset($correo) && $this->getCorreo() != $correo) {
+                if (!self::validaVacio($correo)) {
+                    throw new \Exception('El correo electrónico es requerido.');
+                }
+                if (!self::validaLogMax($correo, 60)) {
+                    throw new \Exception('El correo electrónico no es válido, el máximo de caracteres es "60".');
+                }
+                if (!self::validaCarEsp($correo)) {
+                    throw new \Exception('El correo electrónico no es válido, no se permiten caracteres especiales.');
+                }
+                if (!self::validaCorreo($correo)) {
+                    throw new \Exception('El correo electrónico no es válido, usa el formato "nombre@ejemplo.com".');
+                }
+                if (!self::isCorreoUnico($correo, $this)) {
+                    throw new \Exception('El correo electrónico ingresado ya fue ocupado.');
+                }
+                $aBD['usuario'] = $usuario;
+            }
+            if (!empty($aBD)) {
+                $result = self::crudEdita($aBD, ['id' => $this->getId()]);
+                if ($result !== true) throw new \Exception('Detalle en conexión de BD.');
+            }
+            return true;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * Edita información de contraseña del usuario.
+     * @param Usuario $_Usuario Usuario en sesión.
+     * @param array $aDatos Datos a editar.
+     * @return bool|string true: El usuario fue editado, string: Mensaje de 
+     * validación.
+     */
+    public function editaInformacionClave(Usuario $_Usuario, array $aDatos) {
+        try {
+            $aBD = [];
+            $aDatosEsperados = ['claveActual', 'claveNueva', 'claveConfirmacion'];
+            foreach ($aDatos as $key => $value) {
+                if (in_array($key, $aDatosEsperados)) {
+                    $$key = trim($value);
+                } else {
+                    throw new \Exception("El dato \"$key\" no es aceptado para editar 
+                    la información de contraseña del usuario.");
+                }
+            }
+            if (!isset($claveActual) || !self::validaVacio($claveActual)) {
+                throw new \Exception('La contraseña actual es requerida.');
+            } else {
+                if (!self::validaLogMax($claveActual, 80)) {
+                    throw new \Exception('La contraseña actual no es válida, el máximo de caracteres es "80".');
+                }
+            }
+            $verificaClave = password_verify($claveActual, $this->getClave());
+            if ($verificaClave !== true) {
+                throw new \Exception('La contraseña actual no es correcta.');
+            }
+            if (!isset($claveNueva) || !self::validaVacio($claveNueva)) {
+                throw new \Exception('La nueva contraseña es requerida.');
+            } else {
+                if (!self::validaLogMax($claveNueva, 80)) {
+                    throw new \Exception('La nueva contraseña no es válida, el máximo de caracteres es "80".');
+                }
+            }
+            if (!isset($claveConfirmacion) || !self::validaVacio($claveConfirmacion)) {
+                throw new \Exception('La confirmación de la nueva contraseña es requerida.');
+            } else {
+                if (!self::validaLogMax($claveConfirmacion, 80)) {
+                    throw new \Exception('La confirmación de la nueva contraseña no es válida, el máximo de caracteres es "80".');
+                }
+            }
+            if ($claveNueva != $claveConfirmacion) {
+                throw new \Exception('La nueva contraseña no coincide con la confirmación.');
+            }
+            $aBD = ['clave' => password_hash($claveNueva, PASSWORD_DEFAULT)];
+            if (!empty($aBD)) {
+                $result = self::crudEdita($aBD, ['id' => $this->getId()]);
+                if ($result !== true) throw new \Exception('Detalle en conexión de BD.');
+            }
+            return true;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
      * Crea usuario.
      * @param Perfil $_Perfil Perfil a relacionar con el usuario.
      * @param array $aDatos Datos a registrar.
-     * @return bool true: El usuario fue creado, false: Mensaje de 
+     * @return bool|string true: El usuario fue creado, string: Mensaje de 
      * validación.
      */
     public static function crea(Perfil $_Perfil, array $aDatos) {

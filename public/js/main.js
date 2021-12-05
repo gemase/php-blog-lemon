@@ -166,8 +166,44 @@ const Usuario = ((HttpCtrl) => {
         })
     }
 
+    const eventosEditaUsuInfGeneral = () => {
+        const formEditaUsuInfGeneral = document.getElementById('formEditaUsuInfGeneral'),
+        botonEditaUsuInfGeneral = document.getElementById('botonEditaUsuInfGeneral'),
+        contAlertaEditaUsuInfGeneral = document.getElementById('contAlertaEditaUsuInfGeneral')
+        
+        formEditaUsuInfGeneral.addEventListener('submit', (event) => {
+            event.preventDefault()
+            HttpCtrl.postGeneral(event, 'postEditaInfGeneral', botonEditaUsuInfGeneral, contAlertaEditaUsuInfGeneral)
+        })
+    }
+
+    const eventosEditaUsuInfCuenta = () => {
+        const formEditaUsuInfCuenta = document.getElementById('formEditaUsuInfCuenta'),
+        botonEditaUsuInfCuenta = document.getElementById('botonEditaUsuInfCuenta'),
+        contAlertaEditaUsuInfCuenta = document.getElementById('contAlertaEditaUsuInfCuenta')
+        
+        formEditaUsuInfCuenta.addEventListener('submit', (event) => {
+            event.preventDefault()
+            HttpCtrl.postGeneral(event, 'postEditaInfCuenta', botonEditaUsuInfCuenta, contAlertaEditaUsuInfCuenta)
+        })
+    }
+
+    const eventosEditaUsuInfClave = () => {
+        const formEditaUsuInfClave = document.getElementById('formEditaUsuInfClave'),
+        botonEditaUsuInfClave = document.getElementById('botonEditaUsuInfClave'),
+        contAlertaEditaUsuInfClave = document.getElementById('contAlertaEditaUsuInfClave')
+        
+        formEditaUsuInfClave.addEventListener('submit', (event) => {
+            event.preventDefault()
+            HttpCtrl.postGeneral(event, 'postEditaInfClave', botonEditaUsuInfClave, contAlertaEditaUsuInfClave)
+        })
+    }
+
     return {
         eventosNuevoUsuario: eventosNuevoUsuario,
-        eventosLogin: eventosLogin
+        eventosLogin: eventosLogin,
+        eventosEditaUsuInfGeneral: eventosEditaUsuInfGeneral,
+        eventosEditaUsuInfCuenta: eventosEditaUsuInfCuenta,
+        eventosEditaUsuInfClave: eventosEditaUsuInfClave
     }
 })(HttpCtrl)

@@ -1,6 +1,8 @@
 <?php
 namespace App\Models;
 
+use DateTime;
+
 trait Validador {
 
     /**
@@ -81,5 +83,17 @@ trait Validador {
         $valorFil = filter_var($valor, FILTER_SANITIZE_SPECIAL_CHARS);
         if ($valor != $valorFil) return false;
         return true;
+    }
+
+    /**
+     * Valida que el valor ingresado sea una fecha válida.
+     * @param string $valor Fecha a validar.
+     * @param string $formato Formato de fecha a validad.
+     * @return bool true: Válido, false: No válido.
+     */
+    public static function validaFecha($valor, string $formato = 'Y-m-d') {
+        $_DateTime = \DateTime::createFromFormat($formato, $valor);
+        if ($_DateTime instanceof DateTime) return true;
+        return false;
     }
 }
