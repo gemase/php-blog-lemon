@@ -354,14 +354,7 @@ class Usuario extends Crud {
                 'nombre', 'apellido', 'pais', 'ciudad', 'genero', 'fechaNacimiento', 
                 'biografia'
             ];
-            foreach ($aDatos as $key => $value) {
-                if (in_array($key, $aDatosEsperados)) {
-                    $$key = trim($value);
-                } else {
-                    throw new \Exception("El dato \"$key\" no es aceptado para editar 
-                    la información general del usuario.");
-                }
-            }
+            extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));
             if (isset($nombre) && $this->getNombre() != $nombre) {
                 if (!self::validaVacio($nombre)) {
                     throw new \Exception('El nombre es requerido.');
@@ -463,14 +456,7 @@ class Usuario extends Crud {
         try {
             $aBD = [];
             $aDatosEsperados = ['usuario', 'correo'];
-            foreach ($aDatos as $key => $value) {
-                if (in_array($key, $aDatosEsperados)) {
-                    $$key = trim($value);
-                } else {
-                    throw new \Exception("El dato \"$key\" no es aceptado para editar 
-                    la información de cuenta del usuario.");
-                }
-            }
+            extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));
             if (isset($usuario) && $this->getUsuario() != $usuario) {
                 if (!self::validaVacio($usuario)) {
                     throw new \Exception('El usuario es requerido.');
@@ -525,14 +511,7 @@ class Usuario extends Crud {
         try {
             $aBD = [];
             $aDatosEsperados = ['claveActual', 'claveNueva', 'claveConfirmacion'];
-            foreach ($aDatos as $key => $value) {
-                if (in_array($key, $aDatosEsperados)) {
-                    $$key = trim($value);
-                } else {
-                    throw new \Exception("El dato \"$key\" no es aceptado para editar 
-                    la información de contraseña del usuario.");
-                }
-            }
+            extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));
             if (!isset($claveActual) || !self::validaVacio($claveActual)) {
                 throw new \Exception('La contraseña actual es requerida.');
             } else {
@@ -584,13 +563,7 @@ class Usuario extends Crud {
             $aDatosEsperados = [
                 'nombre', 'apellido', 'usuario', 'correo', 'clave', 'claveConfirmacion'
             ];
-            foreach ($aDatos as $key => $value) {
-                if (in_array($key, $aDatosEsperados)) {
-                    $$key = trim($value);
-                } else {
-                    throw new \Exception("El dato \"$key\" no es aceptado para crear un usuario.");
-                }
-            }
+            extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));
             if (!isset($nombre) || !self::validaVacio($nombre)) {
                 throw new \Exception('El nombre es requerido.');
             } else {

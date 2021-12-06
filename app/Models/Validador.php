@@ -1,9 +1,32 @@
 <?php
 namespace App\Models;
 
-use DateTime;
-
 trait Validador {
+    /**
+     * Valida que los datos a validar sean datos esperados válidos.
+     * @param array $aDatosEsperados Datos que se esperan.
+     * @param array $aDatos Datos a validar ó datos a comparar
+     * con los que se esperan.
+     * @throws Exception Mensaje de validación.
+     * @return array
+     */
+    public static function extraeDatosEsperados(array $aDatosEsperados, array $aDatos) {
+        if (empty($aDatosEsperados)) {
+            throw new \Exception("Sin éxito en datos esperados. Los datos esperados son requeridos.");
+        }
+        if (empty($aDatos)) {
+            throw new \Exception("Sin éxito en datos esperados. Sin datos que validar.");
+        }
+        $aDatosValidos = [];
+        foreach ($aDatos as $key => $value) {
+            if (in_array($key, $aDatosEsperados)) {
+                $aDatosValidos[$key] = trim($value);
+            } else {
+                throw new \Exception("Sin éxito en datos esperados. El dato \"$key\" no es aceptado.");
+            }
+        }
+        return $aDatosValidos;
+    }
 
     /**
      * Valida que el valor enviado sea un dato númerico entero.
@@ -93,7 +116,7 @@ trait Validador {
      */
     public static function validaFecha($valor, string $formato = 'Y-m-d') {
         $_DateTime = \DateTime::createFromFormat($formato, $valor);
-        if ($_DateTime instanceof DateTime) return true;
+        if ($_DateTime instanceof \DateTime) return true;
         return false;
     }
 }

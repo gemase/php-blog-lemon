@@ -151,7 +151,7 @@ const Usuario = ((HttpCtrl) => {
         
         formNuevoUsuario.addEventListener('submit', (event) => {
             event.preventDefault()
-            HttpCtrl.postGeneral(event, 'registro', botonNuevoUsuario, contAlertaNuevoUsuario)
+            HttpCtrl.postGeneral(event, 'postNuevo', botonNuevoUsuario, contAlertaNuevoUsuario)
         })
     }
 
@@ -162,7 +162,7 @@ const Usuario = ((HttpCtrl) => {
         
         formLogin.addEventListener('submit', (event) => {
             event.preventDefault()
-            HttpCtrl.postGeneral(event, 'login', botonLogin, contAlertaLogin)
+            HttpCtrl.postGeneral(event, 'postLogin', botonLogin, contAlertaLogin)
         })
     }
 

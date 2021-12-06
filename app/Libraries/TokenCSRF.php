@@ -33,6 +33,7 @@ class TokenCSRF {
 
     /**
      * Retorna json de mensaje (alerta) cuando el token no es válido.
+     * Es necesario detener el proceso (exit) ya que es respuesta para JS.
      * @return mixed
      */
     public static function msgTokenNoValido() {
@@ -40,6 +41,7 @@ class TokenCSRF {
             'tipoAlerta' => 'alert-danger',
             'textoAlerta' => 'Token no válido, para continuar es necesario recargar la página.'
         ];
-        return json_encode($aResp);
+        echo json_encode($aResp);
+        exit;
     }
 }
