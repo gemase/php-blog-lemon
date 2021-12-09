@@ -1,7 +1,7 @@
 <?php require_once APPROOT . '/Views/Inc/header.php'; ?>
 <div class="container">
     <div class="row m-3">
-        <div class="col-md-6 mx-auto shadow-sm rounded-3 p-4 formulario">
+        <div class="col-md-5 mx-auto shadow-sm rounded-3 p-4 formulario">
             <div id="contAlertaNuevoUsuario"></div>
             <div class="titulo fw-bold mb-2">Crear cuenta</div>
             <form id="formNuevoUsuario" class="row g-3">
@@ -21,15 +21,15 @@
                     <label class="form-label">Correo electrónico</label>
                     <input type="text" name="correo" class="form-control form-control-sm">
                 </div>
-                <div class="col-md-6">
+                <div class="col-12">
                     <label class="form-label">Contraseña</label>
                     <input type="password" name="clave" class="form-control form-control-sm">
                 </div>
-                <div class="col-md-6">
+                <div class="col-12">
                     <label class="form-label">Vuelve a escribir la contraseña</label>
                     <input type="password" name="claveConfirmacion" class="form-control form-control-sm">
                 </div>
-                <div class="text-center">
+                <div class="text-center d-grid gap-2">
                     <button id="botonNuevoUsuario" type="submit" class="btn btn-primary btn-sm">Confirmar</button>
                 </div>
             </form>

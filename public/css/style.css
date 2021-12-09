@@ -3,21 +3,48 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.formulario {
-    background-color: #ffffff;
-    font-size: 14px;
-}
-
-.formulario .titulo {
-    font-size: 24px;
-}
-
 .navbar-principal {
     background-color: #ffffff;
-    font-size: 15px;
+    font-size: .875rem;
 }
 
 .navbar-principal ul li a {
     background-color: #ffffff;
-    font-size: 15px;
+    font-size: .875rem;
+}
+
+.dropdown-menu li a:active {
+    background-color: #ffffff;
+    color: black;
+}
+
+.navbar-nav .nav-item .nav-link {
+    color: black !important;
+}
+
+.formulario {
+    background-color: #ffffff;
+    font-size: .875rem;
+}
+
+.formulario textarea {
+    font-size: .875rem;
+}
+
+.formulario .titulo {
+    font-size: 1.125rem;
+}
+
+.fade-elemento {
+    transition: opacity ease 1s;
+}
+
+.fade-elemento-show {
+    opacity: 1;
+    height: auto;
+}
+
+.fade-elemento-hide {
+    opacity: 0;
+    height: 0;
 }

@@ -13,7 +13,7 @@
                     <label class="form-label">Contraseña</label>
                     <input type="password" name="clave" class="form-control form-control-sm">
                 </div>
-                <div class="text-center">
+                <div class="text-center d-grid gap-2">
                     <button id="botonLogin" type="submit" class="btn btn-primary btn-sm">Confirmar</button>
                 </div>
             </form>

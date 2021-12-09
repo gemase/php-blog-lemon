@@ -70,7 +70,7 @@ class Usuarios {
             $enlace = URLROOT . '/usuarios/login';
             $msg = 'Tu cuenta ha sido creada, ahora puedes <a href="'.$enlace.'">Iniciar sesión</a>.';
             echo json_encode([
-                'tipoAlerta' => 'alert-success', 'textoAlerta' => $msg, 
+                'tipoAlerta' => 'alert-warning', 'textoAlerta' => $msg, 
                 'limpiaForm' => true, 'nuevoToken' => TokenCSRF::creaToken()
             ]);
         } catch (\Exception $e) {
@@ -124,7 +124,7 @@ class Usuarios {
             if ($result !== true) throw new Exception($result);
             $msg = 'Tu información se editó correctamente.';
             echo json_encode([
-                'tipoAlerta' => 'alert-success', 'textoAlerta' => $msg, 
+                'tipoAlerta' => 'alert-warning', 'textoAlerta' => $msg, 
                 'nuevoToken' => TokenCSRF::creaToken()
             ]);
         } catch (\Exception $e) {
@@ -153,7 +153,7 @@ class Usuarios {
             if ($result !== true) throw new Exception($result);
             $msg = 'Tu información se editó correctamente.';
             echo json_encode([
-                'tipoAlerta' => 'alert-success', 'textoAlerta' => $msg, 
+                'tipoAlerta' => 'alert-warning', 'textoAlerta' => $msg, 
                 'nuevoToken' => TokenCSRF::creaToken()
             ]);
         } catch (\Exception $e) {
@@ -183,7 +183,7 @@ class Usuarios {
             if ($result !== true) throw new Exception($result);
             $msg = 'Tu información se editó correctamente.';
             echo json_encode([
-                'tipoAlerta' => 'alert-success', 'textoAlerta' => $msg, 
+                'tipoAlerta' => 'alert-warning', 'textoAlerta' => $msg, 
                 'nuevoToken' => TokenCSRF::creaToken(), 'limpiaForm' => true
             ]);
         } catch (\Exception $e) {

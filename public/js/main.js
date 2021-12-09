@@ -22,6 +22,25 @@ const UI = (() => {
     }
 
     /**
+     * Efecto desvanecer a un elmento.
+     * FIXME: Datelle con múltiples peticiones en botones.
+     * @param {*} contenedor Elemento contenedor a desvanecer.
+     * @param {*} show true: Muestra elemento, false: oculta elemento.
+     * @param {*} retardo Tiempo de retardo para ocultar el elemento.
+     */
+    const fadeElemento = (contenedor, show = true, retardo = 3000) => {
+        if (show) {
+            contenedor.classList.remove('fade-elemento-hide')
+            contenedor.classList.add('fade-elemento-show')
+        } else {
+            setTimeout(() => {
+                contenedor.classList.remove('fade-elemento-show')
+                contenedor.classList.add('fade-elemento-hide')
+            }, retardo)
+        }
+    }
+
+    /**
      * Muestra mensaje de alerta.
      * @param {*} contenedor Elemento contenedor de la alerta.
      * @param {*} texto Texto ó mensaje de la alerta.
@@ -30,8 +49,9 @@ const UI = (() => {
      */
     const muestraAlerta = (contenedor, texto, tipo) => {
         let html = `
-        <div class="alert ${tipo} p-2 text-center" role="alert">
+        <div class="alert ${tipo} p-2 text-center alert-dismissible fade show" role="alert">
             ${texto}
+            <button type="button" class="border-0 bg-transparent" data-bs-dismiss="alert" aria-label="Close">x</button>
         </div>`
         contenedor.innerHTML = html
     }
