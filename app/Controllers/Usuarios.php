@@ -18,6 +18,11 @@ class Usuarios {
         require_once APPROOT . '/Views/Usuarios/index.php';
     }
 
+    public function listar() {
+        $colUsuarios = Usuario::registros();
+        require_once APPROOT . '/Views/Usuarios/listar.php';
+    }
+
     //Vista: Crear cuenta
     public function registro() {
         if (isAutenticado()) redirecciona();

@@ -12,8 +12,8 @@
                             Catálogos
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Perfiles</a></li>
-                            <li><a class="dropdown-item" href="#">Usuarios</a></li>
+                            <li><a class="dropdown-item" href="<?=URLROOT?>/perfiles">Perfiles</a></li>
+                            <li><a class="dropdown-item" href="<?=URLROOT?>/usuarios/listar"">Usuarios</a></li>
                             <li><a class="dropdown-item" href="#">Artículos</a></li>
                             <li><a class="dropdown-item" href="#">Categorías</a></li>
                         </ul>
