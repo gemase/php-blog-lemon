@@ -2,8 +2,10 @@
 use App\Libraries\Request;
 use App\Libraries\Session;
 use App\Libraries\TokenCSRF;
+use App\Libraries\Paginacion;
 use App\Models\Perfil;
 use App\Models\Usuario;
+use App\Models\Validador;
 
 class Usuarios {
     //Vista: Perfil público del usuario.
@@ -18,8 +20,26 @@ class Usuarios {
         require_once APPROOT . '/Views/Usuarios/index.php';
     }
 
-    public function listar() {
-        $colUsuarios = Usuario::registros();
+    //Vista: Catálogo de usuarios.
+    public function listar($numeroPagina = 1) {
+        try {
+            $msgValidacion = null;
+            $enlacePaginacion = URLROOT.'/usuarios/listar/';
+
+            $totalCantReg = Usuario::cantidadRegistros();
+            if (!Validador::validaEntero($totalCantReg)) throw new Exception($totalCantReg);
+
+            $_Paginacion = Paginacion::load($enlacePaginacion, $totalCantReg, $numeroPagina);
+            if (!$_Paginacion instanceof Paginacion) throw new \Exception($_Paginacion);
+
+            $aFiltros = ['limite' => "{$_Paginacion->inicioLimite} , {$_Paginacion->cantidadRegPorPagina}"];
+            $colUsuarios = Usuario::registros($aFiltros);
+            if (!is_array($colUsuarios)) throw new \Exception($colUsuarios);
+        } catch (\Exception $e) {
+            $colUsuarios = [];
+            $_Paginacion = null;
+            $msgValidacion = $e->getMessage();
+        }
         require_once APPROOT . '/Views/Usuarios/listar.php';
     }
 

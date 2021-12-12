@@ -282,6 +282,7 @@ class Usuario extends Crud {
                 throw new \Exception('El usuario no es válido, no se permiten caracteres especiales.');
             }
             $colUsuarios = self::registros(['usuario' => $usuario]);
+            if (!is_array($colUsuarios)) throw new \Exception($colUsuarios);
             if (empty($colUsuarios)) {
                 throw new \Exception('El usuario no existe.');
             }
@@ -669,6 +670,22 @@ class Usuario extends Crud {
     }
 
     /**
+     * Retorna la cantidad de usuarios encontrados.
+     * @param array $aFiltros Campos a filtrar.
+     * @return integer|string
+     */
+    public static function cantidadRegistros(array $aFiltros = []) {
+        try {
+            $tabla = self::getNombreTabla();
+            $condiciones = self::sqlCondiciones($aFiltros);
+            $sql = "SELECT COUNT(*) FROM $tabla WHERE 1 $condiciones";
+            return self::crudUno($sql);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
      * Retorna colección de instancias Usuario.
      * @param array $aFiltros Campos a filtrar.
      * @return array|string string: Mensaje de validación.
@@ -680,6 +697,7 @@ class Usuario extends Crud {
             $condiciones = self::sqlCondiciones($aFiltros);
             $sql = "SELECT * FROM $tabla WHERE 1 $condiciones";
             $aDatos = self::crudTodos($sql);
+            if (!is_array($aDatos)) throw new \Exception($aDatos);
             foreach ($aDatos as $key) {
                 $id = $key['id'];
                 $colObj[$id] = new self($key);
@@ -730,10 +748,11 @@ class Usuario extends Crud {
     /**
      * Forma y retorna consulta en base a los filtros.
      * @param array $aFiltros Campos a filtrar.
+     * @throws Exception Mensaje de validación.
      * @return string
      */
     private static function sqlCondiciones(array $aFiltros = []) {
-        $condiciones = '';
+        $condiciones = $condicionLimite = '';
         if (isset($aFiltros['id'])) {
             $id = trim($aFiltros['id']);
             if (!self::validaEntero($id)) {
@@ -759,7 +778,11 @@ class Usuario extends Crud {
             }
             $condiciones .= " AND correo = '$correo'";
         }
-        return $condiciones;
+        if (isset($aFiltros['limite'])) {
+            $limite = trim($aFiltros['limite']);
+            $condicionLimite .= " LIMIT $limite";
+        }
+        return "$condiciones $condicionLimite";
     }
 
     /**

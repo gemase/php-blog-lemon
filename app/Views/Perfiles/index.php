@@ -2,6 +2,11 @@
 <div class="container">
     <div class="row m-3">
         <div class="col-md-12 mx-auto shadow-sm rounded-3 p-4 formulario">
+
+            <?php if (!empty($msgValidacion)):
+                muestraAlerta($msgValidacion);
+            endif; ?>
+
             <div class="row mb-3">
                 <div class="col">
                     <div class="titulo fw-bold">Catálogo de perfiles</div>
@@ -10,6 +15,7 @@
                     <a class="btn btn-primary btn-sm">Crear</a>
                 </div>
             </div>
+
             <div class="mb-3">
                 <form class="row gx-3 gy-2 align-items-center">
                     <div class="col-md-4">
@@ -29,6 +35,7 @@
                     </div>
                 </form>
             </div>
+
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -58,6 +65,10 @@
                     </tbody>
                 </table>
             </div>
+
+            <?php if ($_Paginacion instanceof \App\Libraries\Paginacion) {
+                $_Paginacion->cargaHtmlPaginacion();
+            } ?>
         </div>
     </div>
 </div>
