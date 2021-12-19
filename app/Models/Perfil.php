@@ -116,30 +116,50 @@ class Perfil extends Crud {
     }
     /**
      * Permiso en el catálogo de usuarios.
+     * @param boolean $muestraDes true: Retorna descripción,
+     * false: Valor del campo.
      * @return integer
      */
-    public function getPermisoUsuarios() {
+    public function getPermisoUsuarios($muestraDes = false) {
+        if ($muestraDes) {
+            return self::A_PER[$this->c_usuarios];
+        }
         return $this->c_usuarios;
     }
     /**
      * Permiso en el catálogo de perfiles.
+     * @param boolean $muestraDes true: Retorna descripción,
+     * false: Valor del campo.
      * @return integer
      */
-    public function getPermisoPerfiles() {
+    public function getPermisoPerfiles($muestraDes = false) {
+        if ($muestraDes) {
+            return self::A_PER[$this->c_perfiles];
+        }
         return $this->c_perfiles;
     }
     /**
      * Permiso en el catálogo de artículos.
+     * @param boolean $muestraDes true: Retorna descripción,
+     * false: Valor del campo.
      * @return integer
      */
-    public function getPermisoArticulos() {
+    public function getPermisoArticulos($muestraDes = false) {
+        if ($muestraDes) {
+            return self::A_PER[$this->c_articulos];
+        }
         return $this->c_articulos;
     }
     /**
      * Permiso en el catálogo de categorías.
+     * @param boolean $muestraDes true: Retorna descripción,
+     * false: Valor del campo.
      * @return integer
      */
-    public function getPermisoCategorias() {
+    public function getPermisoCategorias($muestraDes = false) {
+        if ($muestraDes) {
+            return self::A_PER[$this->c_categorias];
+        }
         return $this->c_categorias;
     }
     /**
@@ -190,6 +210,151 @@ class Perfil extends Crud {
             if (!is_array($colObj)) throw new \Exception($colObj);
             if (empty($colObj)) throw new \Exception('El perfil no existe.');
             return current($colObj);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public static function crea(Usuario $_Usuario, array $aDatos) {
+        try {
+            $aDatosEsperados = [
+                'nombre', 'estatus', 'catalogoUsuarios', 'catalogoPerfiles', 
+                'catalogoArticulos', 'catalogoCategorias'
+            ];
+            extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));
+            if (!isset($nombre) || !self::validaVacio($nombre)) {
+                throw new \Exception('El nombre es requerido.');
+            } else {
+                self::validaNombre($nombre);
+            }
+            if (!isset($estatus) || !self::validaVacio($estatus)) {
+                throw new \Exception('El estatus es requerido.');
+            } else {
+                if (!array_key_exists($estatus, self::A_ESTATUS)) {
+                    throw new \Exception('El estatus no es válido.');
+                }
+            }
+            if (!isset($catalogoUsuarios) || !self::validaVacio($catalogoUsuarios)) {
+                throw new \Exception('El permiso del catálogo de usuarios es requerido.');
+            } else {
+                if (!array_key_exists($catalogoUsuarios, self::A_PER)) {
+                    throw new \Exception('El permiso del catálogo de usuarios no es válido.');
+                }
+            }
+            if (!isset($catalogoPerfiles) || !self::validaVacio($catalogoPerfiles)) {
+                throw new \Exception('El permiso del catálogo de perfiles es requerido.');
+            } else {
+                if (!array_key_exists($catalogoPerfiles, self::A_PER)) {
+                    throw new \Exception('El permiso del catálogo de perfiles no es válido.');
+                }
+            }
+            if (!isset($catalogoArticulos) || !self::validaVacio($catalogoArticulos)) {
+                throw new \Exception('El permiso del catálogo de artículos es requerido.');
+            } else {
+                if (!array_key_exists($catalogoArticulos, self::A_PER)) {
+                    throw new \Exception('El permiso del catálogo de artículos no es válido.');
+                }
+            }
+            if (!isset($catalogoCategorias) || !self::validaVacio($catalogoCategorias)) {
+                throw new \Exception('El permiso del catálogo de categorías es requerido.');
+            } else {
+                if (!array_key_exists($catalogoCategorias, self::A_PER)) {
+                    throw new \Exception('El permiso del catálogo de categorías no es válido.');
+                }
+            }
+            $aBD = [
+                'nombre' => $nombre,
+                'estatus' => $estatus,
+                'c_usuarios' => $catalogoUsuarios,
+                'c_perfiles' => $catalogoPerfiles,
+                'c_articulos' => $catalogoArticulos,
+                'c_categorias' => $catalogoCategorias,
+                'protegido' => self::NO_PROTEGIDO,
+                'id_usuario_creo' => $_Usuario->getId(),
+                'fecha_creo' => date('Y-m-d H:i:s')
+            ];
+            $result = self::crudCrea($aBD);
+            if ($result !== true) throw new \Exception('Detalle en conexión de BD.');
+            return true;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function editaPerfil(Usuario $_Usuario, array $aDatos) {
+        try {
+            $aBD = [];
+            $aDatosEsperados = [
+                'nombre', 'estatus', 'catalogoUsuarios', 'catalogoPerfiles', 
+                'catalogoArticulos', 'catalogoCategorias'
+            ];
+            extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));
+            if (isset($nombre)) {
+                if ($this->nombre != $nombre) {
+                    self::validaNombre($nombre, $this);
+                    $aBD['nombre'] = $nombre;
+                }
+            }
+            if (isset($estatus)) {
+                if ($this->estatus != $estatus) {
+                    if (!self::validaVacio($estatus)) {
+                        throw new \Exception('El estatus es requerido.');
+                    }
+                    if (!array_key_exists($estatus, self::A_ESTATUS)) {
+                        throw new \Exception('El estatus no es válido.');
+                    }
+                    $aBD['estatus'] = $estatus;
+                }
+            }
+            if (isset($catalogoUsuarios)) {
+                if ($this->c_usuarios != $catalogoUsuarios) {
+                    if (!self::validaVacio($catalogoUsuarios)) {
+                        throw new \Exception('El permiso del catálogo de usuarios es requerido.');
+                    }
+                    if (!array_key_exists($catalogoUsuarios, self::A_PER)) {
+                        throw new \Exception('El permiso del catálogo de usuarios no es válido.');
+                    }
+                    $aBD['c_usuarios'] = $catalogoUsuarios;
+                }
+            }
+            if (isset($catalogoPerfiles)) {
+                if ($this->c_perfiles != $catalogoPerfiles) {
+                    if (!self::validaVacio($catalogoPerfiles)) {
+                        throw new \Exception('El permiso del catálogo de perfiles es requerido.');
+                    }
+                    if (!array_key_exists($catalogoPerfiles, self::A_PER)) {
+                        throw new \Exception('El permiso del catálogo de perfiles no es válido.');
+                    }
+                    $aBD['c_perfiles'] = $catalogoPerfiles;
+                }
+            }
+            if (isset($catalogoArticulos)) {
+                if ($this->c_articulos != $catalogoArticulos) {
+                    if (!self::validaVacio($catalogoArticulos)) {
+                        throw new \Exception('El permiso del catálogo de artículos es requerido.');
+                    }
+                    if (!array_key_exists($catalogoArticulos, self::A_PER)) {
+                        throw new \Exception('El permiso del catálogo de artículos no es válido.');
+                    }
+                    $aBD['c_articulos'] = $catalogoArticulos;
+                }
+            }
+            if (isset($catalogoCategorias)) {
+                if ($this->c_categorias != $catalogoCategorias) {
+                    if (!self::validaVacio($catalogoCategorias)) {
+                        throw new \Exception('El permiso del catálogo de categorías es requerido.');
+                    }
+                    if (!array_key_exists($catalogoCategorias, self::A_PER)) {
+                        throw new \Exception('El permiso del catálogo de categorías no es válido.');
+                    }
+                    $aBD['c_categorias'] = $catalogoCategorias;
+                }
+            }
+            if (!empty($aBD)) {
+                $result = self::crudEdita($aBD, ['id' => $this->getId()]);
+                if ($result !== true) throw new \Exception('Detalle en conexión de BD.');
+            }
+            return true;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -302,6 +467,21 @@ class Perfil extends Crud {
         }
     }
 
+    private static function validaNombre($nombre, Perfil $_Perfil = null) {
+        if (!self::validaVacio($nombre)) {
+            throw new \Exception('El nombre es requerido.');
+        }
+        if (!self::validaLogMax($nombre, 60)) {
+            throw new \Exception('El nombre no es válido, el máximo de caracteres es "40".');
+        }
+        if (!self::validaCarEsp($nombre)) {
+            throw new \Exception('El nombre no es válido, no se permiten caracteres especiales.');
+        }
+        if (!self::isNombreUnico($nombre, $_Perfil)) {
+            throw new \Exception('El nombre ingresado ya fue ocupado.');
+        }
+    }
+
     /**
      * Determina si el nombre de perfil es único.
      * @param string $nombre Nombre de perfil.
@@ -334,6 +514,13 @@ class Perfil extends Crud {
                 throw new \Exception('El id perfil no es válido.');
             }
             $condiciones .= " AND id = $id";
+        }
+        if (isset($aFiltros['estatus'])) {
+            $estatus = trim($aFiltros['estatus']);
+            if (!array_key_exists($estatus, self::A_ESTATUS)) {
+                throw new \Exception('El estatus no es válido.');
+            }
+            $condiciones .= " AND estatus = $estatus";
         }
         if (isset($aFiltros['limite'])) {
             $limite = trim($aFiltros['limite']);

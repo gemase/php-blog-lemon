@@ -12,7 +12,9 @@
                     <div class="titulo fw-bold">Catálogo de usuarios</div>
                 </div>
                 <div class="col-md-auto">
-                    <a class="btn btn-primary btn-sm">Crear</a>
+                    <?php if ($tienePermisoEdicion): ?>
+                        <a class="btn btn-primary btn-sm" href="<?=URLROOT?>/usuarios/crear">Crear</a>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -83,12 +85,14 @@
                                 <td><?=$_Usuario->getInsPerfil()->getNombre()?></td>
                                 <td><?=$_Usuario->getEstatus(true)?></td>
                                 <td class="text-center">
-                                    <a href="#" class="btn badge rounded-pill bg-success">
+                                    <a href="<?=URLROOT?>/usuarios/ver/<?=$_Usuario->getId()?>" class="btn badge rounded-pill bg-success">
                                         Ver
                                     </a>
-                                    <a href="#" class="btn badge rounded-pill bg-success">
-                                        Editar
-                                    </a>
+                                    <?php if ($tienePermisoEdicion): ?>
+                                        <a href="<?=URLROOT?>/usuarios/actualizar/<?=$_Usuario->getId()?>" class="btn badge rounded-pill bg-success">
+                                            Editar
+                                        </a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

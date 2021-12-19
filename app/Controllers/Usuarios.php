@@ -23,6 +23,15 @@ class Usuarios {
     //Vista: Catálogo de usuarios.
     public function listar($numeroPagina = 1) {
         try {
+            if (!isAutenticado()) redirecciona();
+
+            $_SysUsuario = getInsSysUsuario();
+            $tienePermisoSoloLectura = $_SysUsuario->getInsPerfil()->tienePermiso('c_usuarios', Perfil::P_LEC);
+            if ($tienePermisoSoloLectura !== true) redirecciona();
+            
+            $tienePermisoEdicion = $_SysUsuario->getInsPerfil()->tienePermiso('c_usuarios', Perfil::P_EDI);
+            $tienePermisoEdicion = $tienePermisoEdicion !== true ? false : true;
+            
             $msgValidacion = null;
             $enlacePaginacion = URLROOT.'/usuarios/listar/';
 
@@ -41,6 +50,29 @@ class Usuarios {
             $msgValidacion = $e->getMessage();
         }
         require_once APPROOT . '/Views/Usuarios/listar.php';
+    }
+
+    //Vista: Crear usuario.
+    public function crear() {
+        if (!isAutenticado()) redirecciona();
+        $aEstatus = Usuario::A_ESTATUS;
+        require_once APPROOT . '/Views/Usuarios/crear.php';
+    }
+
+    //Vista: Crear usuario.
+    public function actualizar($id) {
+        if (!isAutenticado()) redirecciona();
+
+        $_SysUsuario = getInsSysUsuario();
+        $tienePermisoEdicion = $_SysUsuario->getInsPerfil()->tienePermiso('c_usuarios', Perfil::P_EDI);
+        if ($tienePermisoEdicion !== true) redirecciona();
+
+        $_Usuario = Usuario::load($id);
+        if (!$_Usuario instanceof Usuario) redirecciona();
+        $colPerfiles = Perfil::registros(['estatus' => Perfil::E_ACTIVO]);
+        $aEstatus = Usuario::A_ESTATUS;
+        $aGeneros = Usuario::A_GENEROS;
+        require_once APPROOT . '/Views/Usuarios/actualizar.php';
     }
 
     //Vista: Crear cuenta
@@ -64,6 +96,22 @@ class Usuarios {
         redirecciona();
     }
 
+    //Vista: Ver usuario.
+    public function ver($id) {
+        if (!isAutenticado()) redirecciona();
+
+        $_SysUsuario = getInsSysUsuario();
+        $tienePermisoSoloLectura = $_SysUsuario->getInsPerfil()->tienePermiso('c_usuarios', Perfil::P_LEC);
+        if ($tienePermisoSoloLectura !== true) redirecciona();
+
+        $tienePermisoEdicion = $_SysUsuario->getInsPerfil()->tienePermiso('c_usuarios', Perfil::P_EDI);
+        $tienePermisoEdicion = $tienePermisoEdicion !== true ? false : true;
+
+        $_Usuario = Usuario::load($id);
+        if (!$_Usuario instanceof Usuario) redirecciona();
+        require_once APPROOT . '/Views/Usuarios/ver.php';
+    }
+
     //Vista: Editar perfil del usuario.
     public function editar() {
         if (!isAutenticado()) redirecciona();
@@ -72,7 +120,7 @@ class Usuarios {
         require_once APPROOT . '/Views/Usuarios/editar.php';
     }
 
-    //Petición post: Registra ó crea un usuario.
+    //Petición post: Registra ó crea un usuario (publica).
     public function postNuevo() {
         try {
             if (!Request::has('post')) redirecciona();
@@ -106,7 +154,7 @@ class Usuarios {
         }
     }
 
-    //Petición post: Inicia sesión del usuario.
+    //Petición post: Inicia sesión del usuario (publica).
     public function postLogin() {
         try {
             if (!Request::has('post')) redirecciona();
@@ -126,7 +174,7 @@ class Usuarios {
         }
     }
 
-    //Petición post: Edita información general de usuario.
+    //Petición post: Edita información general de usuario (mi perfil de usuario).
     public function postEditaInfGeneral() {
         try {
             if (!Request::has('post')) redirecciona();
@@ -160,7 +208,7 @@ class Usuarios {
         }
     }
 
-    //Petición post: Edita información de cuenta del usuario.
+    //Petición post: Edita información de cuenta del usuario (mi perfil de usuario).
     public function postEditaInfCuenta() {
         try {
             if (!Request::has('post')) redirecciona();
@@ -189,7 +237,7 @@ class Usuarios {
         }
     }
 
-    //Petición post: Edita información de contrasela del usuario.
+    //Petición post: Edita información de contrasela del usuario (mi perfil de usuario).
     public function postEditaInfClave() {
         try {
             if (!Request::has('post')) redirecciona();
@@ -207,6 +255,159 @@ class Usuarios {
             $result = $_Usuario->editaInformacionClave($_Usuario, $aDatos);
             if ($result !== true) throw new Exception($result);
             $msg = 'Tu información se editó correctamente.';
+            echo json_encode([
+                'tipoAlerta' => 'alert-warning', 'textoAlerta' => $msg, 
+                'nuevoToken' => TokenCSRF::creaToken(), 'limpiaForm' => true
+            ]);
+        } catch (\Exception $e) {
+            echo json_encode([
+                'tipoAlerta' => 'alert-danger', 'textoAlerta' => $e->getMessage(), 
+                'nuevoToken' => TokenCSRF::creaToken()
+            ]);
+        }
+    }
+
+    //Petición post: Registra ó crea un usuario (acceso a catálogo de usuarios).
+    public function postCrear() {
+        try {
+            if (!Request::has('post')) redirecciona();
+            $_RequServer = Request::load('server');
+            if (!TokenCSRF::verificaToken($_RequServer->get('HTTP_CSRF_TOKEN'))) {
+                TokenCSRF::msgTokenNoValido();
+            }
+
+            $_SysUsuario = getInsSysUsuario();
+            $tienePermiso = $_SysUsuario->getInsPerfil()->tienePermiso('c_usuarios', Perfil::P_EDI);
+            if ($tienePermiso !== true) throw new \Exception($tienePermiso);
+
+            $_Perfil = Perfil::getInsPerfilAutor();
+            $_Req = Request::load('post');
+            $aDatos = [
+                'nombre' => $_Req->get('nombre'),
+                'apellido' => $_Req->get('apellido'),
+                'usuario' => $_Req->get('usuario'),
+                'correo' => $_Req->get('correo'),
+                'clave' => $_Req->get('clave'),
+                'estatus' => $_Req->get('estatus'),
+                'claveConfirmacion' => $_Req->get('claveConfirmacion')
+            ];
+            $result = Usuario::crea($_Perfil, $aDatos);
+            if ($result !== true) throw new Exception($result);
+            $enlace = URLROOT . '/usuarios/login';
+            $msg = 'El usuario fue creado correctamente.';
+            echo json_encode([
+                'tipoAlerta' => 'alert-warning', 'textoAlerta' => $msg, 
+                'limpiaForm' => true, 'nuevoToken' => TokenCSRF::creaToken()
+            ]);
+        } catch (\Exception $e) {
+            echo json_encode([
+                'tipoAlerta' => 'alert-danger', 'textoAlerta' => $e->getMessage(), 
+                'nuevoToken' => TokenCSRF::creaToken()
+            ]);
+        }
+    }
+
+    //Petición post: Edita información general de usuario (acceso a catálogo de usuarios).
+    public function postEditaInfGeneralAccesoCatalogo() {
+        try {
+            if (!Request::has('post')) redirecciona();
+            $_RequServer = Request::load('server');
+            if (!TokenCSRF::verificaToken($_RequServer->get('HTTP_CSRF_TOKEN'))) {
+                TokenCSRF::msgTokenNoValido();
+            }
+            $_SysUsuario = getInsSysUsuario();
+            $tienePermiso = $_SysUsuario->getInsPerfil()->tienePermiso('c_usuarios', Perfil::P_EDI);
+            if ($tienePermiso !== true) throw new \Exception($tienePermiso);
+
+            $_Req = Request::load('post');
+            $_Usuario = Usuario::load($_Req->get('id'));
+            if (!$_Usuario instanceof Usuario) throw new Exception($_Usuario);
+
+            $aDatos = [
+                'nombre' => $_Req->get('nombre'),
+                'apellido' => $_Req->get('apellido'),
+                'pais' => $_Req->get('pais'),
+                'ciudad' => $_Req->get('ciudad'),
+                'genero' => $_Req->get('genero'),
+                'fechaNacimiento' => $_Req->get('fechaNacimiento'),
+                'biografia' => $_Req->get('biografia')
+            ];
+            $result = $_Usuario->editaInformacionGeneral($_SysUsuario, $aDatos);
+            if ($result !== true) throw new Exception($result);
+            $msg = 'El usuario fue editado correctamente.';
+            echo json_encode([
+                'tipoAlerta' => 'alert-warning', 'textoAlerta' => $msg, 
+                'nuevoToken' => TokenCSRF::creaToken()
+            ]);
+        } catch (\Exception $e) {
+            echo json_encode([
+                'tipoAlerta' => 'alert-danger', 'textoAlerta' => $e->getMessage(), 
+                'nuevoToken' => TokenCSRF::creaToken()
+            ]);
+        }
+    }
+
+    //Petición post: Edita información de cuenta del usuario (acceso a catálogo de usuarios).
+    public function postEditaInfCuentaAccesoCatalogo() {
+        try {
+            if (!Request::has('post')) redirecciona();
+            $_RequServer = Request::load('server');
+            if (!TokenCSRF::verificaToken($_RequServer->get('HTTP_CSRF_TOKEN'))) {
+                TokenCSRF::msgTokenNoValido();
+            }
+            $_SysUsuario = getInsSysUsuario();
+            $tienePermiso = $_SysUsuario->getInsPerfil()->tienePermiso('c_usuarios', Perfil::P_EDI);
+            if ($tienePermiso !== true) throw new \Exception($tienePermiso);
+
+            $_Req = Request::load('post');
+            $_Usuario = Usuario::load($_Req->get('id'));
+            if (!$_Usuario instanceof Usuario) throw new Exception($_Usuario);
+            $_Perfil = Perfil::load($_Req->get('idPerfil'));
+            if (!$_Perfil instanceof Perfil) throw new \Exception($_Perfil);
+
+            $aDatos = [
+                'usuario' => $_Req->get('usuario'),
+                'correo' => $_Req->get('correo'),
+                'estatus' => $_Req->get('estatus')
+            ];
+            $result = $_Usuario->editaInformacionCuenta($_SysUsuario, $aDatos, $_Perfil);
+            if ($result !== true) throw new Exception($result);
+            $msg = 'El usuario fue editado correctamente.';
+            echo json_encode([
+                'tipoAlerta' => 'alert-warning', 'textoAlerta' => $msg, 
+                'nuevoToken' => TokenCSRF::creaToken()
+            ]);
+        } catch (\Exception $e) {
+            echo json_encode([
+                'tipoAlerta' => 'alert-danger', 'textoAlerta' => $e->getMessage(), 
+                'nuevoToken' => TokenCSRF::creaToken()
+            ]);
+        }
+    }
+
+    //Petición post: Edita información de contraseña del usuario (acceso a catálogo de usuarios).
+    public function postEditaInfClaveAccesoCatalogo() {
+        try {
+            if (!Request::has('post')) redirecciona();
+            $_RequServer = Request::load('server');
+            if (!TokenCSRF::verificaToken($_RequServer->get('HTTP_CSRF_TOKEN'))) {
+                TokenCSRF::msgTokenNoValido();
+            }
+            $_SysUsuario = getInsSysUsuario();
+            $tienePermiso = $_SysUsuario->getInsPerfil()->tienePermiso('c_usuarios', Perfil::P_EDI);
+            if ($tienePermiso !== true) throw new \Exception($tienePermiso);
+
+            $_Req = Request::load('post');
+            $_Usuario = Usuario::load($_Req->get('id'));
+            if (!$_Usuario instanceof Usuario) throw new Exception($_Usuario);
+            
+            $aDatos = [
+                'claveNueva' => $_Req->get('claveNueva'),
+                'claveConfirmacion' => $_Req->get('claveConfirmacion')
+            ];
+            $result = $_Usuario->editaInformacionClave($_SysUsuario, $aDatos, false);
+            if ($result !== true) throw new Exception($result);
+            $msg = 'El usuario fue editado correctamente.';
             echo json_encode([
                 'tipoAlerta' => 'alert-warning', 'textoAlerta' => $msg, 
                 'nuevoToken' => TokenCSRF::creaToken(), 'limpiaForm' => true

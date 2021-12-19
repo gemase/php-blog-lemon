@@ -11,9 +11,11 @@
                 <div class="col">
                     <div class="titulo fw-bold">Catálogo de perfiles</div>
                 </div>
-                <div class="col-md-auto">
-                    <a class="btn btn-primary btn-sm">Crear</a>
-                </div>
+                <?php if ($tienePermisoEdicion): ?>
+                    <div class="col-md-auto">
+                        <a class="btn btn-primary btn-sm" href="<?=URLROOT?>/perfiles/crear">Crear</a>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div class="mb-3">
@@ -53,12 +55,14 @@
                                 <td><?=$_Perfil->getNombre()?></td>
                                 <td><?=$_Perfil->getEstatus(true)?></td>
                                 <td class="text-center">
-                                    <a href="#" class="btn badge rounded-pill bg-success">
+                                    <a href="<?=URLROOT?>/perfiles/ver/<?=$_Perfil->getId()?>" class="btn badge rounded-pill bg-success">
                                         Ver
                                     </a>
-                                    <a href="#" class="btn badge rounded-pill bg-success">
-                                        Editar
-                                    </a>
+                                    <?php if ($tienePermisoEdicion): ?>
+                                        <a href="<?=URLROOT?>/perfiles/editar/<?=$_Perfil->getId()?>" class="btn badge rounded-pill bg-success">
+                                            Editar
+                                        </a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

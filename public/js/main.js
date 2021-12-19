@@ -49,7 +49,7 @@ const UI = (() => {
      */
     const muestraAlerta = (contenedor, texto, tipo) => {
         let html = `
-        <div class="alert ${tipo} p-2 text-center alert-dismissible fade show" role="alert">
+        <div class="alert ${tipo} pt-1 pb-1 pr-2 pl-2 text-center alert-dismissible fade show" role="alert">
             ${texto}
             <button type="button" class="border-0 bg-transparent" data-bs-dismiss="alert" aria-label="Close">x</button>
         </div>`
@@ -219,11 +219,90 @@ const Usuario = ((HttpCtrl) => {
         })
     }
 
+    const eventosCrearUsuario = () => {
+        const formCreaUsuario = document.getElementById('formCreaUsuario'),
+        botonCreaUsuario = document.getElementById('botonCreaUsuario'),
+        contAlertaCreaUsuario = document.getElementById('contAlertaCreaUsuario')
+        
+        formCreaUsuario.addEventListener('submit', (event) => {
+            event.preventDefault()
+            HttpCtrl.postGeneral(event, 'postCrear', botonCreaUsuario, contAlertaCreaUsuario)
+        })
+    }
+
+    const eventosActualizaUsuInfGeneral = () => {
+        const formActualizaUsuInfGeneral = document.getElementById('formActualizaUsuInfGeneral'),
+        botonActualizaUsuInfGeneral = document.getElementById('botonActualizaUsuInfGeneral'),
+        contAlertaActualizaUsuInfGeneral = document.getElementById('contAlertaActualizaUsuInfGeneral')
+        
+        formActualizaUsuInfGeneral.addEventListener('submit', (event) => {
+            event.preventDefault()
+            HttpCtrl.postGeneral(event, '/usuarios/postEditaInfGeneralAccesoCatalogo', botonActualizaUsuInfGeneral, contAlertaActualizaUsuInfGeneral)
+        })
+    }
+
+    const eventosActualizaUsuInfCuenta = () => {
+        const formActualizaUsuInfCuenta = document.getElementById('formActualizaUsuInfCuenta'),
+        botonActualizaUsuInfCuenta = document.getElementById('botonActualizaUsuInfCuenta'),
+        contAlertaActualizaUsuInfCuenta = document.getElementById('contAlertaActualizaUsuInfCuenta')
+        
+        formActualizaUsuInfCuenta.addEventListener('submit', (event) => {
+            event.preventDefault()
+            HttpCtrl.postGeneral(event, '/usuarios/postEditaInfCuentaAccesoCatalogo', botonActualizaUsuInfCuenta, contAlertaActualizaUsuInfCuenta)
+        })
+    }
+
+    const eventosActualizaUsuInfClave = () => {
+        const formActualizaUsuInfClave = document.getElementById('formActualizaUsuInfClave'),
+        botonActualizaUsuInfClave = document.getElementById('botonActualizaUsuInfClave'),
+        contAlertaActualizaUsuInfClave = document.getElementById('contAlertaActualizaUsuInfClave')
+        
+        formActualizaUsuInfClave.addEventListener('submit', (event) => {
+            event.preventDefault()
+            HttpCtrl.postGeneral(event, '/usuarios/postEditaInfClaveAccesoCatalogo', botonActualizaUsuInfClave, contAlertaActualizaUsuInfClave)
+        })
+    }
+
     return {
         eventosNuevoUsuario: eventosNuevoUsuario,
         eventosLogin: eventosLogin,
         eventosEditaUsuInfGeneral: eventosEditaUsuInfGeneral,
         eventosEditaUsuInfCuenta: eventosEditaUsuInfCuenta,
-        eventosEditaUsuInfClave: eventosEditaUsuInfClave
+        eventosEditaUsuInfClave: eventosEditaUsuInfClave,
+        eventosCrearUsuario: eventosCrearUsuario,
+        eventosActualizaUsuInfCuenta: eventosActualizaUsuInfCuenta,
+        eventosActualizaUsuInfClave: eventosActualizaUsuInfClave,
+        eventosActualizaUsuInfGeneral: eventosActualizaUsuInfGeneral
+    }
+})(HttpCtrl)
+
+const Perfil = ((HttpCtrl) => {
+    'use strict'
+
+    const eventosCrearPerfil = () => {
+        const formCrearPerfil = document.getElementById('formCrearPerfil'),
+        botonCrearPerfil = document.getElementById('botonCrearPerfil'),
+        contAlertaCrearPerfil = document.getElementById('contAlertaCrearPerfil')
+        
+        formCrearPerfil.addEventListener('submit', (event) => {
+            event.preventDefault()
+            HttpCtrl.postGeneral(event, 'postCrear', botonCrearPerfil, contAlertaCrearPerfil)
+        })
+    }
+
+    const eventosEditarPerfil = () => {
+        const formEditarPerfil = document.getElementById('formEditarPerfil'),
+        botonEditarPerfil = document.getElementById('botonEditarPerfil'),
+        contAlertaEditarPerfil = document.getElementById('contAlertaEditarPerfil')
+        
+        formEditarPerfil.addEventListener('submit', (event) => {
+            event.preventDefault()
+            HttpCtrl.postGeneral(event, '/perfiles/postEditar', botonEditarPerfil, contAlertaEditarPerfil)
+        })
+    }
+
+    return {
+        eventosCrearPerfil: eventosCrearPerfil,
+        eventosEditarPerfil: eventosEditarPerfil
     }
 })(HttpCtrl)

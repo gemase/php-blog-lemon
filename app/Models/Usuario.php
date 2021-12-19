@@ -450,13 +450,14 @@ class Usuario extends Crud {
      * Edita información de cuenta del usuario.
      * @param Usuario $_Usuario Usuario en sesión.
      * @param array $aDatos Datos a editar.
+     * @param Perfil|null $_Perfil Perfil.
      * @return bool|string true: El usuario fue editado, string: Mensaje de 
      * validación.
      */
-    public function editaInformacionCuenta($_Usuario, array $aDatos) {
+    public function editaInformacionCuenta($_Usuario, array $aDatos, Perfil $_Perfil = null) {
         try {
             $aBD = [];
-            $aDatosEsperados = ['usuario', 'correo'];
+            $aDatosEsperados = ['usuario', 'correo', 'estatus'];
             extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));
             if (isset($usuario) && $this->getUsuario() != $usuario) {
                 if (!self::validaVacio($usuario)) {
@@ -489,7 +490,21 @@ class Usuario extends Crud {
                 if (!self::isCorreoUnico($correo, $this)) {
                     throw new \Exception('El correo electrónico ingresado ya fue ocupado.');
                 }
-                $aBD['usuario'] = $usuario;
+                $aBD['correo'] = $correo;
+            }
+            if ($_Perfil instanceof Perfil) {
+                if ($this->getIdPerfil() != $_Perfil->getId()) {
+                    $aBD['id_perfil'] = $_Perfil->getId();
+                }
+            }
+            if (isset($estatus) && $this->getEstatus() != $estatus) {
+                if (!self::validaVacio($estatus)) {
+                    throw new \Exception('El estatus es requerido.');
+                }
+                if (!array_key_exists($estatus, self::A_ESTATUS)) {
+                    throw new \Exception('El estatus no es válido.');
+                }
+                $aBD['estatus'] = $estatus;
             }
             if (!empty($aBD)) {
                 $result = self::crudEdita($aBD, ['id' => $this->getId()]);
@@ -505,24 +520,28 @@ class Usuario extends Crud {
      * Edita información de contraseña del usuario.
      * @param Usuario $_Usuario Usuario en sesión.
      * @param array $aDatos Datos a editar.
+     * @param boolean $validarClavaActual true: Se toma en cuenta la clave
+     * actual y se valida, false: Se omite validaciones de clave actual.
      * @return bool|string true: El usuario fue editado, string: Mensaje de 
      * validación.
      */
-    public function editaInformacionClave(Usuario $_Usuario, array $aDatos) {
+    public function editaInformacionClave(Usuario $_Usuario, array $aDatos, $validarClavaActual = true) {
         try {
             $aBD = [];
             $aDatosEsperados = ['claveActual', 'claveNueva', 'claveConfirmacion'];
             extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));
-            if (!isset($claveActual) || !self::validaVacio($claveActual)) {
-                throw new \Exception('La contraseña actual es requerida.');
-            } else {
-                if (!self::validaLogMax($claveActual, 80)) {
-                    throw new \Exception('La contraseña actual no es válida, el máximo de caracteres es "80".');
+            if ($validarClavaActual) { //Tomamos en cuenta la clave actual y la validamos.
+                if (!isset($claveActual) || !self::validaVacio($claveActual)) {
+                    throw new \Exception('La contraseña actual es requerida.');
+                } else {
+                    if (!self::validaLogMax($claveActual, 80)) {
+                        throw new \Exception('La contraseña actual no es válida, el máximo de caracteres es "80".');
+                    }
                 }
-            }
-            $verificaClave = password_verify($claveActual, $this->getClave());
-            if ($verificaClave !== true) {
-                throw new \Exception('La contraseña actual no es correcta.');
+                $verificaClave = password_verify($claveActual, $this->getClave());
+                if ($verificaClave !== true) {
+                    throw new \Exception('La contraseña actual no es correcta.');
+                }
             }
             if (!isset($claveNueva) || !self::validaVacio($claveNueva)) {
                 throw new \Exception('La nueva contraseña es requerida.');
@@ -562,7 +581,8 @@ class Usuario extends Crud {
     public static function crea(Perfil $_Perfil, array $aDatos) {
         try {
             $aDatosEsperados = [
-                'nombre', 'apellido', 'usuario', 'correo', 'clave', 'claveConfirmacion'
+                'nombre', 'apellido', 'usuario', 'correo', 'clave', 'claveConfirmacion',
+                'estatus'
             ];
             extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));
             if (!isset($nombre) || !self::validaVacio($nombre)) {
@@ -631,6 +651,16 @@ class Usuario extends Crud {
             if ($clave != $claveConfirmacion) {
                 throw new \Exception('Las contraseñas no coinciden.');
             }
+            if (isset($estatus)) {
+                if (!self::validaVacio($estatus)) {
+                    throw new \Exception('El estatus es requerido.');
+                }
+                if (!array_key_exists($estatus, self::A_ESTATUS)) {
+                    throw new \Exception('El estatus no es válido.');
+                }
+            } else { //Si no llega un estatus, asignamos el estatus predeterminado.
+                $estatus = self::E_ACTIVO; //Predeterminado: estatus activo.
+            }
             $aBD = [
                 'id_perfil' => $_Perfil->getId(),
                 'nombre' => $nombre,
@@ -638,7 +668,7 @@ class Usuario extends Crud {
                 'usuario' => strtolower($usuario),
                 'correo' => $correo,
                 'clave' => password_hash($clave, PASSWORD_DEFAULT),
-                'estatus' => self::E_ACTIVO,
+                'estatus' => $estatus,
                 'protegido' => self::NO_PROTEGIDO,
                 'fecha_creo' => date('Y-m-d H:i:s')
             ];
