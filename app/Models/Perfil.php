@@ -522,11 +522,18 @@ class Perfil extends Crud {
             }
             $condiciones .= " AND estatus = $estatus";
         }
+        if (isset($aFiltros['buscar'])) {
+            $buscar = trim($aFiltros['buscar']);
+            if (!self::validaCarEsp($buscar)) {
+                throw new \Exception('El campo buscar no es válido, no se permiten caracteres especiales.');
+            }
+            $condiciones .= " AND nombre LIKE '%$buscar%'";
+        }
         if (isset($aFiltros['limite'])) {
             $limite = trim($aFiltros['limite']);
             $condicionLimite .= " LIMIT $limite";
         }
-        return $condiciones;
+        return "$condiciones $condicionLimite";
     }
 
     /**

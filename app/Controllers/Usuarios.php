@@ -34,14 +34,64 @@ class Usuarios {
             
             $msgValidacion = null;
             $enlacePaginacion = URLROOT.'/usuarios/listar/';
+            $aEstatus = Usuario::A_ESTATUS;
+            $colPerfiles = Perfil::registros();
+            $aFiltros = [];
 
-            $totalCantReg = Usuario::cantidadRegistros();
+            $filtroEstatus = Session::has('filtroEstatus') ? Session::get('filtroEstatus') : '';
+            $filtroIdPerfil = Session::has('filtroIdPerfil') ? Session::get('filtroIdPerfil') : '';
+            $filtroFechaInicial = Session::has('filtroFechaInicial') ? Session::get('filtroFechaInicial') : '';
+            $filtroFechaFinal = Session::has('filtroFechaFinal') ? Session::get('filtroFechaFinal') : '';
+            $filtroBuscar = Session::has('filtroBuscar') ? Session::get('filtroBuscar') : '';
+
+            if (Request::has('post')) {
+                $_Req = Request::load('post');
+                $filtroEstatus = $_Req->get('estatus');
+                $filtroIdPerfil = $_Req->get('idPerfil');
+                $filtroFechaInicial = $_Req->get('fechaInicial');
+                $filtroFechaFinal = $_Req->get('fechaFinal');
+                $filtroBuscar = $_Req->get('buscar');
+            }
+
+            //Se procesan los valores a filtrar.
+            if (Validador::validaVacio($filtroEstatus)) {
+                $aFiltros['estatus'] = $filtroEstatus;
+                Session::add('filtroEstatus', $filtroEstatus);
+            } else {
+                Session::remove('filtroEstatus');
+            }
+            if (Validador::validaVacio($filtroIdPerfil)) {
+                $aFiltros['idPerfil'] = $filtroIdPerfil;
+                Session::add('filtroIdPerfil', $filtroIdPerfil);
+            } else {
+                Session::remove('filtroIdPerfil');
+            }
+            if (Validador::validaVacio($filtroFechaInicial)) {
+                $aFiltros['fechaInicial'] = $filtroFechaInicial;
+                Session::add('filtroFechaInicial', $filtroFechaInicial);
+            } else {
+                Session::remove('filtroFechaInicial');
+            }
+            if (Validador::validaVacio($filtroFechaFinal)) {
+                $aFiltros['fechaFinal'] = $filtroFechaFinal;
+                Session::add('filtroFechaFinal', $filtroFechaFinal);
+            } else {
+                Session::remove('filtroFechaFinal');
+            }
+            if (Validador::validaVacio($filtroBuscar)) {
+                $aFiltros['buscar'] = $filtroBuscar;
+                Session::add('filtroBuscar', $filtroBuscar);
+            } else {
+                Session::remove('filtroBuscar');
+            }
+            
+            $totalCantReg = Usuario::cantidadRegistros($aFiltros);
             if (!Validador::validaEntero($totalCantReg)) throw new Exception($totalCantReg);
 
             $_Paginacion = Paginacion::load($enlacePaginacion, $totalCantReg, $numeroPagina);
             if (!$_Paginacion instanceof Paginacion) throw new \Exception($_Paginacion);
 
-            $aFiltros = ['limite' => "{$_Paginacion->inicioLimite} , {$_Paginacion->cantidadRegPorPagina}"];
+            $aFiltros['limite'] = "{$_Paginacion->inicioLimite} , {$_Paginacion->cantidadRegPorPagina}";
             $colUsuarios = Usuario::registros($aFiltros);
             if (!is_array($colUsuarios)) throw new \Exception($colUsuarios);
         } catch (\Exception $e) {
@@ -55,6 +105,7 @@ class Usuarios {
     //Vista: Crear usuario.
     public function crear() {
         if (!isAutenticado()) redirecciona();
+        $colPerfiles = Perfil::registros(['estatus' => Perfil::E_ACTIVO]);
         $aEstatus = Usuario::A_ESTATUS;
         require_once APPROOT . '/Views/Usuarios/crear.php';
     }
@@ -280,8 +331,10 @@ class Usuarios {
             $tienePermiso = $_SysUsuario->getInsPerfil()->tienePermiso('c_usuarios', Perfil::P_EDI);
             if ($tienePermiso !== true) throw new \Exception($tienePermiso);
 
-            $_Perfil = Perfil::getInsPerfilAutor();
             $_Req = Request::load('post');
+            $_Perfil = Perfil::load($_Req->get('idPerfil'));
+            if (!$_Perfil instanceof Perfil) throw new \Exception($_Perfil);
+            
             $aDatos = [
                 'nombre' => $_Req->get('nombre'),
                 'apellido' => $_Req->get('apellido'),

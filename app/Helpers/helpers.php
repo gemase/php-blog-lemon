@@ -47,7 +47,7 @@ function muestraAlerta($texto, $tipo = 'alert-danger') {
     ob_start(); ?>
     <div class="row justify-content-md-center">
         <div class="col-md-auto">
-            <div class="alert <?=$tipo?> p-2 text-center alert-dismissible fade show" role="alert">
+            <div class="alert <?=$tipo?> pt-1 pb-1 pr-2 pl-2 text-center alert-dismissible fade show" role="alert">
                 <?=$texto?>
                 <button type="button" class="border-0 bg-transparent" data-bs-dismiss="alert" aria-label="Close">x</button>
             </div>

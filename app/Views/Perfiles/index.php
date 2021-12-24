@@ -19,15 +19,23 @@
             </div>
 
             <div class="mb-3">
-                <form class="row gx-3 gy-2 align-items-center">
+                <form class="row gx-3 gy-2 align-items-center" action="<?=URLROOT?>/perfiles/" method="post">
                     <div class="col-md-4">
                         <div class="input-group input-group-sm mb-3">
-                            <label class="input-group-text" for="inputGroupSelect01">Estatus</label>
-                            <select class="form-select" id="inputGroupSelect01">
-                                <option selected>Seleccione...</option>
-                                <option value="1">Activo</option>
-                                <option value="2">Inactivo</option>
+                            <label class="input-group-text">Estatus</label>
+                            <select class="form-select" name="estatus">
+                                <option value="" selected>Seleccione...</option>
+                                <?php foreach ($aEstatus as $key => $value): 
+                                    $seleccionado = $key == $filtroEstatus ? 'selected' : ''; ?>
+                                    <option <?=$seleccionado?> value="<?=$key?>"><?=$value?></option>
+                                <?php endforeach; ?>
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text" title="Buscar por nombre, apellido, usuario ó correo electrónico">Buscar</span>
+                            <input type="text" name="buscar" value="<?=$filtroBuscar?>" class="form-control">
                         </div>
                     </div>
                     <div class="col-auto">

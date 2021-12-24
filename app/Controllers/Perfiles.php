@@ -2,6 +2,7 @@
 use App\Libraries\Request;
 use App\Libraries\TokenCSRF;
 use App\Libraries\Paginacion;
+use App\Libraries\Session;
 use App\Models\Perfil;
 use App\Models\Validador;
 
@@ -18,16 +19,41 @@ class Perfiles {
             $tienePermisoEdicion = $_SysUsuario->getInsPerfil()->tienePermiso('c_perfiles', Perfil::P_EDI);
             $tienePermisoEdicion = $tienePermisoEdicion !== true ? false : true;
             
-            $msgValidacion = null;
+            $msgValidacion = '';
             $enlacePaginacion = URLROOT.'/perfiles/';
+            $aEstatus = Perfil::A_ESTATUS;
+            $aFiltros = [];
 
-            $totalCantReg = Perfil::cantidadRegistros();
+            $filtroEstatus = Session::has('filtroEstatus') ? Session::get('filtroEstatus') : '';
+            $filtroBuscar = Session::has('filtroBuscar') ? Session::get('filtroBuscar') : '';
+
+            if (Request::has('post')) {
+                $_Req = Request::load('post');
+                $filtroEstatus = $_Req->get('estatus');
+                $filtroBuscar = $_Req->get('buscar');
+            }
+
+            //Se procesan los valores a filtrar.
+            if (Validador::validaVacio($filtroEstatus)) {
+                $aFiltros['estatus'] = $filtroEstatus;
+                Session::add('filtroEstatus', $filtroEstatus);
+            } else {
+                Session::remove('filtroEstatus');
+            }
+            if (Validador::validaVacio($filtroBuscar)) {
+                $aFiltros['buscar'] = $filtroBuscar;
+                Session::add('filtroBuscar', $filtroBuscar);
+            } else {
+                Session::remove('filtroBuscar');
+            }
+
+            $totalCantReg = Perfil::cantidadRegistros($aFiltros);
             if (!Validador::validaEntero($totalCantReg)) throw new Exception($totalCantReg);
 
             $_Paginacion = Paginacion::load($enlacePaginacion, $totalCantReg, $numeroPagina);
             if (!$_Paginacion instanceof Paginacion) throw new \Exception($_Paginacion);
 
-            $aFiltros = ['limite' => "{$_Paginacion->inicioLimite} , {$_Paginacion->cantidadRegPorPagina}"];
+            $aFiltros['limite'] = "{$_Paginacion->inicioLimite} , {$_Paginacion->cantidadRegPorPagina}";
             $colPerfiles = Perfil::registros($aFiltros);
             if (!is_array($colPerfiles)) throw new \Exception($colPerfiles);
         } catch (\Exception $e) {

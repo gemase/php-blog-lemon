@@ -37,6 +37,15 @@
                     <input type="password" name="claveConfirmacion" class="form-control form-control-sm">
                 </div>
                 <div class="col-12">
+                    <label class="form-label">Perfil</label>
+                    <select name="idPerfil" class="form-select form-select-sm">
+                        <option value="" selected>Seleccione...</option>
+                        <?php foreach ($colPerfiles as $key => $_Perfil): ?>
+                            <option value="<?=$key?>"><?=$_Perfil->getNombre()?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-12">
                     <label class="form-label">Estatus</label>
                     <select name="estatus" class="form-select form-select-sm">
                         <option value="" selected>Seleccione...</option>

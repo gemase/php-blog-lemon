@@ -808,6 +808,41 @@ class Usuario extends Crud {
             }
             $condiciones .= " AND correo = '$correo'";
         }
+        if (isset($aFiltros['estatus'])) {
+            $estatus = trim($aFiltros['estatus']);
+            if (!array_key_exists($estatus, self::A_ESTATUS)) {
+                throw new \Exception('El estatus no es válido.');
+            }
+            $condiciones .= " AND estatus = $estatus";
+        }
+        if (isset($aFiltros['idPerfil'])) {
+            $idPerfil = trim($aFiltros['idPerfil']);
+            if (!self::validaEntero($idPerfil)) {
+                throw new \Exception('El id perfil no es válido.');
+            }
+            $condiciones .= " AND id_perfil = $idPerfil";
+        }
+        if (isset($aFiltros['fechaInicial'])) {
+            $fechaInicial = trim($aFiltros['fechaInicial']);
+            if (!self::validaFecha($fechaInicial)) {
+                throw new \Exception('La fecha inicial no es válida.');
+            }
+            $condiciones .= " AND fecha_creo >= '$fechaInicial 00:00:00'";
+        }
+        if (isset($aFiltros['fechaFinal'])) {
+            $fechaFinal = trim($aFiltros['fechaFinal']);
+            if (!self::validaFecha($fechaFinal)) {
+                throw new \Exception('La fecha final no es válida.');
+            }
+            $condiciones .= " AND fecha_creo <= '$fechaFinal 23:59:59'";
+        }
+        if (isset($aFiltros['buscar'])) {
+            $buscar = trim($aFiltros['buscar']);
+            if (!self::validaCarEsp($buscar)) {
+                throw new \Exception('El campo buscar no es válido, no se permiten caracteres especiales.');
+            }
+            $condiciones .= " AND (nombre LIKE '%$buscar%' OR apellido LIKE '%$buscar%' OR usuario LIKE '%$buscar%' OR correo LIKE '%$buscar%')";
+        }
         if (isset($aFiltros['limite'])) {
             $limite = trim($aFiltros['limite']);
             $condicionLimite .= " LIMIT $limite";
