@@ -87,6 +87,7 @@ class Perfiles {
 
         $_Perfil = Perfil::load($id);
         if (!$_Perfil instanceof Perfil) redirecciona();
+        if ($_Perfil->esProtegido()) redirecciona();
         $aEstatus = Perfil::A_ESTATUS;
         $aPermisos = Perfil::A_PER;
         require_once APPROOT . '/Views/Perfiles/editar.php';

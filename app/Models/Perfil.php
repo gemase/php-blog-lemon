@@ -164,10 +164,14 @@ class Perfil extends Crud {
     }
     /**
      * Determina si el perfil puede ser editado.
-     * @return integer
+     * @return bool true: Perfil protegido,
+     * false: Perfil no protegido.
      */
-    public function getProtegido() {
-        return $this->protegido;
+    public function esProtegido() {
+        if ($this->protegido == self::PROTEGIDO) {
+            return true;
+        }
+        return false;
     }
     /**
      * Id usuario que creo el perfil.
@@ -283,6 +287,9 @@ class Perfil extends Crud {
 
     public function editaPerfil(Usuario $_Usuario, array $aDatos) {
         try {
+            if ($this->protegido == self::PROTEGIDO) {
+                throw new \Exception('La acción no pudo ser realizada. Perfil protegido por el sistema.');
+            }
             $aBD = [];
             $aDatosEsperados = [
                 'nombre', 'estatus', 'catalogoUsuarios', 'catalogoPerfiles', 

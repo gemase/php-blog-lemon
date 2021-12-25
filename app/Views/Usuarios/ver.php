@@ -7,7 +7,7 @@
                     <div class="titulo fw-bold">Usuario</div>
                 </div>
                 <div class="col-md-auto">
-                    <?php if ($tienePermisoEdicion): ?>
+                    <?php if ($tienePermisoEdicion && !$_Usuario->esProtegido()): ?>
                         <a class="btn btn-primary btn-sm" href="<?=URLROOT?>/usuarios/actualizar/<?=$_Usuario->getId()?>">Editar</a>
                     <?php endif; ?>
                     <a class="btn btn-primary btn-sm" href="<?=URLROOT?>/usuarios/listar">Catálogo</a>

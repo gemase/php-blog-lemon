@@ -120,6 +120,7 @@ class Usuarios {
 
         $_Usuario = Usuario::load($id);
         if (!$_Usuario instanceof Usuario) redirecciona();
+        if ($_Usuario->esProtegido()) redirecciona();
         $colPerfiles = Perfil::registros(['estatus' => Perfil::E_ACTIVO]);
         $aEstatus = Usuario::A_ESTATUS;
         $aGeneros = Usuario::A_GENEROS;

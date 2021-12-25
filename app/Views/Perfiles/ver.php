@@ -7,7 +7,7 @@
                     <div class="titulo fw-bold">Perfil</div>
                 </div>
                 <div class="col-md-auto">
-                    <?php if ($tienePermisoEdicion): ?>
+                    <?php if ($tienePermisoEdicion && !$_Perfil->esProtegido()): ?>
                         <a class="btn btn-primary btn-sm" href="<?=URLROOT?>/perfiles/editar/<?=$_Perfil->getId()?>">Editar</a>
                     <?php endif; ?>
                     <a class="btn btn-primary btn-sm" href="<?=URLROOT?>/perfiles/">Catálogo</a>

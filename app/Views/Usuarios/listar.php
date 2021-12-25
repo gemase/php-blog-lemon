@@ -98,10 +98,14 @@
                                     <a href="<?=URLROOT?>/usuarios/ver/<?=$_Usuario->getId()?>" class="btn badge rounded-pill bg-success">
                                         Ver
                                     </a>
-                                    <?php if ($tienePermisoEdicion): ?>
-                                        <a href="<?=URLROOT?>/usuarios/actualizar/<?=$_Usuario->getId()?>" class="btn badge rounded-pill bg-success">
-                                            Editar
-                                        </a>
+                                    <?php if ($_Usuario->esProtegido()): ?>
+                                        <a class="btn badge rounded-pill bg-info">Protegido</a>
+                                    <?php else: ?>
+                                        <?php if ($tienePermisoEdicion): ?>
+                                            <a href="<?=URLROOT?>/usuarios/actualizar/<?=$_Usuario->getId()?>" class="btn badge rounded-pill bg-success">
+                                                Editar
+                                            </a>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </td>
                             </tr>

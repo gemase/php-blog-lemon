@@ -229,10 +229,14 @@ class Usuario extends Crud {
     }
     /**
      * Determina si el usuario puede ser editado.
-     * @return integer
+     * @return bool true: Usuario protegido,
+     * false: Usuario no protegido.
      */
-    public function getProtegido() {
-        return $this->protegido;
+    public function esProtegido() {
+        if ($this->protegido == self::PROTEGIDO) {
+            return true;
+        }
+        return false;
     }
     /**
      * Fecha y hora de creación del usuario.
@@ -350,6 +354,9 @@ class Usuario extends Crud {
      */
     public function editaInformacionGeneral(Usuario $_Usuario, array $aDatos) {
         try {
+            if ($this->protegido == self::PROTEGIDO) {
+                throw new \Exception('La acción no pudo ser realizada. Usuario protegido por el sistema.');
+            }
             $aBD = [];
             $aDatosEsperados = [
                 'nombre', 'apellido', 'pais', 'ciudad', 'genero', 'fechaNacimiento', 
@@ -456,6 +463,9 @@ class Usuario extends Crud {
      */
     public function editaInformacionCuenta($_Usuario, array $aDatos, Perfil $_Perfil = null) {
         try {
+            if ($this->protegido == self::PROTEGIDO) {
+                throw new \Exception('La acción no pudo ser realizada. Usuario protegido por el sistema.');
+            }
             $aBD = [];
             $aDatosEsperados = ['usuario', 'correo', 'estatus'];
             extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));
@@ -527,6 +537,9 @@ class Usuario extends Crud {
      */
     public function editaInformacionClave(Usuario $_Usuario, array $aDatos, $validarClavaActual = true) {
         try {
+            if ($this->protegido == self::PROTEGIDO) {
+                throw new \Exception('La acción no pudo ser realizada. Usuario protegido por el sistema.');
+            }
             $aBD = [];
             $aDatosEsperados = ['claveActual', 'claveNueva', 'claveConfirmacion'];
             extract(self::extraeDatosEsperados($aDatosEsperados, $aDatos));

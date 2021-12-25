@@ -66,10 +66,14 @@
                                     <a href="<?=URLROOT?>/perfiles/ver/<?=$_Perfil->getId()?>" class="btn badge rounded-pill bg-success">
                                         Ver
                                     </a>
-                                    <?php if ($tienePermisoEdicion): ?>
-                                        <a href="<?=URLROOT?>/perfiles/editar/<?=$_Perfil->getId()?>" class="btn badge rounded-pill bg-success">
-                                            Editar
-                                        </a>
+                                    <?php if ($_Perfil->esProtegido()): ?>
+                                        <a class="btn badge rounded-pill bg-info">Protegido</a>
+                                    <?php else: ?>
+                                        <?php if ($tienePermisoEdicion): ?>
+                                            <a href="<?=URLROOT?>/perfiles/editar/<?=$_Perfil->getId()?>" class="btn badge rounded-pill bg-success">
+                                                Editar
+                                            </a>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -78,9 +82,9 @@
                 </table>
             </div>
 
-            <?php if ($_Paginacion instanceof \App\Libraries\Paginacion) {
-                $_Paginacion->cargaHtmlPaginacion();
-            } ?>
+            <?php if ($_Paginacion instanceof \App\Libraries\Paginacion): ?>
+                <?=$_Paginacion->cargaHtmlPaginacion();?>
+            <?php endif; ?>
         </div>
     </div>
 </div>
